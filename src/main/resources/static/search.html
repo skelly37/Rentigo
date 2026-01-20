@@ -141,6 +141,56 @@
             border-color: #e67e22;
         }
 
+        .city-input-wrapper {
+            position: relative;
+        }
+
+        .city-autocomplete {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e67e22;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .city-autocomplete.show {
+            display: block;
+        }
+
+        .city-autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.15s;
+        }
+
+        .city-autocomplete-item:hover,
+        .city-autocomplete-item.selected {
+            background-color: #fff3e6;
+        }
+
+        .city-autocomplete-item svg {
+            width: 16px;
+            height: 16px;
+            color: #e67e22;
+            flex-shrink: 0;
+        }
+
+        .city-autocomplete-item span {
+            color: #333;
+            font-size: 14px;
+        }
+
         .search-btn {
             background-color: #e67e22;
             color: white;
@@ -467,9 +517,10 @@
         <form class="search-form" id="searchForm">
             <div class="form-field">
                 <label>Miasto</label>
-                <select id="citySelect">
-                    <option value="">Wszystkie miasta</option>
-                </select>
+                <div class="city-input-wrapper">
+                    <input type="text" id="cityInput" placeholder="Wszystkie miasta" autocomplete="off">
+                    <div class="city-autocomplete" id="cityAutocomplete"></div>
+                </div>
             </div>
             <div class="form-field">
                 <label>Zameldowanie</label>
@@ -527,7 +578,9 @@
         let cities = [];
         let favorites = new Set();
         let currentCityId = null;
+        let currentCityName = '';
         let currentGuests = null;
+        let selectedIndex = -1;
 
         document.addEventListener('DOMContentLoaded', async () => {
             updateAuthUI();
@@ -535,12 +588,19 @@
             await loadFavorites();
 
             const urlParams = new URLSearchParams(window.location.search);
-            const cityId = urlParams.get('city');
+            const cityParam = urlParams.get('city');
             const guests = urlParams.get('guests');
 
-            if (cityId) {
-                document.getElementById('citySelect').value = cityId;
-                currentCityId = cityId;
+            if (cityParam) {
+                const city = cities.find(c => String(c.id) === cityParam);
+                if (city) {
+                    currentCityId = city.id;
+                    currentCityName = city.name;
+                    document.getElementById('cityInput').value = city.name;
+                } else {
+                    currentCityName = cityParam;
+                    document.getElementById('cityInput').value = cityParam;
+                }
             }
             if (guests) {
                 document.getElementById('guestsSelect').value = guests;
@@ -555,22 +615,128 @@
             document.getElementById('checkIn').value = tomorrow.toISOString().split('T')[0];
             document.getElementById('checkOut').value = nextWeek.toISOString().split('T')[0];
 
+            setupCityAutocomplete();
             await searchPlaces();
         });
 
         async function loadCities() {
             try {
-                const citiesData = await api.getCities();
-                cities = citiesData;
-                const citySelect = document.getElementById('citySelect');
-                citiesData.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city.id;
-                    option.textContent = city.name;
-                    citySelect.appendChild(option);
-                });
+                cities = await api.getCities();
             } catch (error) {
                 console.error('Error loading cities:', error);
+            }
+        }
+
+        function setupCityAutocomplete() {
+            const input = document.getElementById('cityInput');
+            const dropdown = document.getElementById('cityAutocomplete');
+
+            input.addEventListener('input', () => {
+                const query = input.value.trim().toLowerCase();
+                selectedIndex = -1;
+                currentCityId = null;
+
+                if (query.length === 0) {
+                    showCitySuggestions(cities);
+                    return;
+                }
+
+                const filtered = cities.filter(city =>
+                    city.name.toLowerCase().includes(query) ||
+                    (city.country && city.country.toLowerCase().includes(query))
+                );
+
+                showCitySuggestions(filtered);
+            });
+
+            input.addEventListener('focus', () => {
+                const query = input.value.trim().toLowerCase();
+                if (query.length === 0) {
+                    showCitySuggestions(cities);
+                } else {
+                    const filtered = cities.filter(city =>
+                        city.name.toLowerCase().includes(query)
+                    );
+                    showCitySuggestions(filtered);
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                const items = dropdown.querySelectorAll('.city-autocomplete-item');
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                    updateCitySelection(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedIndex = Math.max(selectedIndex - 1, -1);
+                    updateCitySelection(items);
+                } else if (e.key === 'Enter' && dropdown.classList.contains('show')) {
+                    e.preventDefault();
+                    if (selectedIndex >= 0 && items[selectedIndex]) {
+                        items[selectedIndex].click();
+                    } else {
+                        dropdown.classList.remove('show');
+                    }
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.remove('show');
+                    selectedIndex = -1;
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.city-input-wrapper')) {
+                    dropdown.classList.remove('show');
+                    selectedIndex = -1;
+                }
+            });
+        }
+
+        function showCitySuggestions(cityList) {
+            const dropdown = document.getElementById('cityAutocomplete');
+
+            if (cityList.length === 0) {
+                dropdown.innerHTML = '<div class="city-autocomplete-item"><span style="color: #666;">Brak wyników</span></div>';
+                dropdown.classList.add('show');
+                return;
+            }
+
+            dropdown.innerHTML = cityList.map((city, index) => `
+                <div class="city-autocomplete-item ${index === selectedIndex ? 'selected' : ''}" data-id="${city.id}" data-name="${city.name}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span>${city.name}${city.country ? ', ' + city.country : ''}</span>
+                </div>
+            `).join('');
+
+            dropdown.querySelectorAll('.city-autocomplete-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const cityId = item.dataset.id;
+                    const cityName = item.dataset.name;
+
+                    if (cityId) {
+                        currentCityId = cityId;
+                        currentCityName = cityName;
+                        document.getElementById('cityInput').value = cityName;
+                        dropdown.classList.remove('show');
+                        selectedIndex = -1;
+                    }
+                });
+            });
+
+            dropdown.classList.add('show');
+        }
+
+        function updateCitySelection(items) {
+            items.forEach((item, i) => {
+                item.classList.toggle('selected', i === selectedIndex);
+            });
+
+            if (selectedIndex >= 0 && items[selectedIndex]) {
+                items[selectedIndex].scrollIntoView({ block: 'nearest' });
             }
         }
 
@@ -587,8 +753,23 @@
         document.getElementById('searchForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             currentPage = 0;
-            currentCityId = document.getElementById('citySelect').value || null;
+
+            const cityInput = document.getElementById('cityInput').value.trim();
+            if (!currentCityId && cityInput) {
+                const matchedCity = cities.find(c => c.name.toLowerCase() === cityInput.toLowerCase());
+                if (matchedCity) {
+                    currentCityId = matchedCity.id;
+                    currentCityName = matchedCity.name;
+                } else {
+                    currentCityName = cityInput;
+                }
+            } else if (!cityInput) {
+                currentCityId = null;
+                currentCityName = '';
+            }
+
             currentGuests = document.getElementById('guestsSelect').value || null;
+            document.getElementById('cityAutocomplete').classList.remove('show');
             await searchPlaces();
         });
 
@@ -609,7 +790,10 @@
                 if (currentCityId) {
                     result = await api.getPlacesByCity(currentCityId, currentGuests, currentPage, 12);
                     const city = cities.find(c => c.id == currentCityId);
-                    document.getElementById('resultsTitle').textContent = `Noclegi w mieście ${city?.name || ''}`;
+                    document.getElementById('resultsTitle').textContent = `Noclegi w mieście ${city?.name || currentCityName}`;
+                } else if (currentCityName) {
+                    result = await api.getPlaces(currentPage, 12);
+                    document.getElementById('resultsTitle').textContent = `Noclegi: ${currentCityName}`;
                 } else {
                     result = await api.getPlaces(currentPage, 12);
                     document.getElementById('resultsTitle').textContent = 'Dostępne noclegi';

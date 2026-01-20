@@ -5,19 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rentigo - Dodaj miejsce</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f5f5;
-            min-height: 100vh;
-        }
-
         .header {
             background: #1a1a2e;
             display: flex;
@@ -57,12 +46,25 @@
             opacity: 1;
         }
 
-        .user-menu {
+        .header-icon {
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
             color: white;
-            cursor: pointer;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+            text-decoration: none;
+        }
+
+        .header-icon:hover {
+            opacity: 1;
+        }
+
+        .header-icon svg {
+            width: 24px;
+            height: 24px;
         }
 
         .user-avatar {
@@ -75,6 +77,26 @@
             justify-content: center;
             font-weight: 600;
             font-size: 16px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: white;
+            color: #333;
         }
 
         .page-container {
@@ -197,107 +219,6 @@
             font-weight: 500;
         }
 
-        .image-upload-area {
-            border: 2px dashed #e0e0e0;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #fafafa;
-        }
-
-        .image-upload-area:hover {
-            border-color: #e67e22;
-            background: #fff9f5;
-        }
-
-        .image-upload-area svg {
-            width: 48px;
-            height: 48px;
-            color: #ccc;
-            margin-bottom: 16px;
-        }
-
-        .image-upload-area h4 {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .image-upload-area p {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .image-upload-area .browse-link {
-            color: #e67e22;
-            font-weight: 500;
-        }
-
-        .uploaded-images {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .uploaded-image {
-            position: relative;
-            aspect-ratio: 4/3;
-            border-radius: 8px;
-            overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-        }
-
-        .uploaded-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .uploaded-image .remove-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 28px;
-            height: 28px;
-            background: rgba(0,0,0,0.6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .uploaded-image .remove-btn:hover {
-            background: rgba(0,0,0,0.8);
-        }
-
-        .uploaded-image .remove-btn svg {
-            width: 16px;
-            height: 16px;
-            color: white;
-        }
-
-        .uploaded-image .main-badge {
-            position: absolute;
-            bottom: 8px;
-            left: 8px;
-            background: #e67e22;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
         .amenities-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -342,35 +263,23 @@
             margin-top: 30px;
         }
 
-        .btn {
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
+        .host-upgrade-notice {
+            background: linear-gradient(135deg, #fff3e6 0%, #ffe0b3 100%);
+            border: 2px solid #e67e22;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 24px;
         }
 
-        .btn-primary {
-            background: #e67e22;
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: #d35400;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-secondary:hover {
-            border-color: #ccc;
+        .host-upgrade-notice h3 {
             color: #333;
+            margin-bottom: 12px;
+        }
+
+        .host-upgrade-notice p {
+            color: #666;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 768px) {
@@ -411,14 +320,13 @@
                 <a href="add-place.html">Dodaj miejsce</a>
                 <a href="contact.html">Kontakt</a>
             </nav>
-            <a href="favorites.html" class="user-menu" title="Ulubione" style="margin-right: -10px;">
-                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="favorites.html" class="header-icon" title="Ulubione">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
             </a>
-            <a href="profile.html" class="user-menu">
-                <div class="user-avatar">JK</div>
-            </a>
+            <a href="profile.html" class="user-avatar" style="display: none;"></a>
+            <a href="login.html" class="login-btn">Zaloguj się</a>
         </div>
     </header>
 
@@ -428,8 +336,19 @@
             <p class="page-subtitle">Wypełnij formularz, aby dodać swoje miejsce do serwisu Rentigo</p>
         </div>
 
-        <form onsubmit="return false;">
-            <!-- Basic Info -->
+        <div id="hostUpgradeNotice" class="host-upgrade-notice" style="display: none;">
+            <h3>Zostań gospodarzem</h3>
+            <p>Aby dodawać miejsca, musisz najpierw zostać gospodarzem.</p>
+            <button class="btn btn-primary" onclick="upgradeToHost()">Zostań gospodarzem</button>
+        </div>
+
+        <div id="loginNotice" class="host-upgrade-notice" style="display: none;">
+            <h3>Zaloguj się</h3>
+            <p>Aby dodać miejsce, musisz być zalogowany.</p>
+            <a href="login.html" class="btn btn-primary">Zaloguj się</a>
+        </div>
+
+        <form id="addPlaceForm" style="display: none;">
             <div class="form-card">
                 <h2 class="form-card-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,48 +359,42 @@
 
                 <div class="form-group">
                     <label class="form-label">Nazwa miejsca <span class="required">*</span></label>
-                    <input type="text" class="form-input" placeholder="np. Apartament Stare Miasto">
+                    <input type="text" class="form-input" id="name" placeholder="np. Apartament Stare Miasto" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Typ noclegu <span class="required">*</span></label>
-                        <select class="form-select">
+                        <select class="form-select" id="type" required>
                             <option value="">Wybierz typ</option>
-                            <option value="apartment">Apartament</option>
-                            <option value="studio">Studio</option>
-                            <option value="house">Dom</option>
-                            <option value="room">Pokój</option>
-                            <option value="loft">Loft</option>
+                            <option value="APARTMENT">Apartament</option>
+                            <option value="STUDIO">Studio</option>
+                            <option value="HOUSE">Dom</option>
+                            <option value="ROOM">Pokój</option>
+                            <option value="LOFT">Loft</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Miasto <span class="required">*</span></label>
-                        <select class="form-select">
+                        <select class="form-select" id="cityId" required>
                             <option value="">Wybierz miasto</option>
-                            <option value="krakow">Kraków</option>
-                            <option value="warszawa">Warszawa</option>
-                            <option value="gdansk">Gdańsk</option>
-                            <option value="wroclaw">Wrocław</option>
-                            <option value="poznan">Poznań</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Adres <span class="required">*</span></label>
-                    <input type="text" class="form-input" placeholder="np. ul. Floriańska 15/4">
+                    <input type="text" class="form-input" id="address" placeholder="np. ul. Floriańska 15/4" required>
                     <p class="form-hint">Dokładny adres będzie widoczny tylko po potwierdzeniu rezerwacji</p>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Opis <span class="required">*</span></label>
-                    <textarea class="form-textarea" placeholder="Opisz swoje miejsce - co je wyróżnia, jakie udogodnienia oferujesz, co znajduje się w okolicy..."></textarea>
+                    <textarea class="form-textarea" id="description" placeholder="Opisz swoje miejsce - co je wyróżnia, jakie udogodnienia oferujesz, co znajduje się w okolicy..." required></textarea>
                     <p class="form-hint">Minimum 100 znaków. Dobry opis zwiększa szanse na rezerwację.</p>
                 </div>
             </div>
 
-            <!-- Capacity & Rooms -->
             <div class="form-card">
                 <h2 class="form-card-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -493,7 +406,7 @@
                 <div class="form-row form-row-3">
                     <div class="form-group">
                         <label class="form-label">Maksymalna liczba gości <span class="required">*</span></label>
-                        <select class="form-select">
+                        <select class="form-select" id="maxGuests" required>
                             <option value="1">1 osoba</option>
                             <option value="2">2 osoby</option>
                             <option value="3">3 osoby</option>
@@ -506,7 +419,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Liczba sypialni <span class="required">*</span></label>
-                        <select class="form-select">
+                        <select class="form-select" id="bedrooms" required>
                             <option value="0">Studio (brak osobnej)</option>
                             <option value="1">1 sypialnia</option>
                             <option value="2" selected>2 sypialnie</option>
@@ -516,85 +429,15 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Liczba łazienek <span class="required">*</span></label>
-                        <select class="form-select">
+                        <select class="form-select" id="bathrooms" required>
                             <option value="1" selected>1 łazienka</option>
                             <option value="2">2 łazienki</option>
                             <option value="3">3+ łazienki</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Liczba łóżek pojedynczych</label>
-                        <select class="form-select">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4+</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Liczba łóżek podwójnych</label>
-                        <select class="form-select">
-                            <option value="0">0</option>
-                            <option value="1" selected>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3+</option>
-                        </select>
-                    </div>
-                </div>
             </div>
 
-            <!-- Photos -->
-            <div class="form-card">
-                <h2 class="form-card-title">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    Zdjęcia
-                </h2>
-
-                <div class="image-upload-area">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                    </svg>
-                    <h4>Przeciągnij zdjęcia tutaj</h4>
-                    <p>lub <span class="browse-link">wybierz z dysku</span></p>
-                    <p class="form-hint" style="margin-top: 12px;">JPG, PNG. Maksymalnie 10 zdjęć, każde do 5MB.</p>
-                </div>
-
-                <div class="uploaded-images">
-                    <div class="uploaded-image">
-                        <span>place-1-main.jpg</span>
-                        <div class="remove-btn">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </div>
-                        <span class="main-badge">Główne</span>
-                    </div>
-                    <div class="uploaded-image">
-                        <span>place-1-2.jpg</span>
-                        <div class="remove-btn">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="uploaded-image">
-                        <span>place-1-3.jpg</span>
-                        <div class="remove-btn">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pricing -->
             <div class="form-card">
                 <h2 class="form-card-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -607,44 +450,21 @@
                     <div class="form-group">
                         <label class="form-label">Cena za noc <span class="required">*</span></label>
                         <div class="price-input-wrapper">
-                            <input type="number" class="form-input" placeholder="np. 250" value="320">
+                            <input type="number" class="form-input" id="pricePerNight" placeholder="np. 250" required min="1">
                             <span class="price-currency">PLN</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Opłata za sprzątanie</label>
                         <div class="price-input-wrapper">
-                            <input type="number" class="form-input" placeholder="np. 50" value="80">
+                            <input type="number" class="form-input" id="cleaningFee" placeholder="np. 50" min="0">
                             <span class="price-currency">PLN</span>
                         </div>
                         <p class="form-hint">Jednorazowa opłata doliczana do rezerwacji</p>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Minimalny pobyt</label>
-                        <select class="form-select">
-                            <option value="1">1 noc</option>
-                            <option value="2" selected>2 noce</option>
-                            <option value="3">3 noce</option>
-                            <option value="7">7 nocy</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Maksymalny pobyt</label>
-                        <select class="form-select">
-                            <option value="7">7 nocy</option>
-                            <option value="14">14 nocy</option>
-                            <option value="30" selected>30 nocy</option>
-                            <option value="90">90 nocy</option>
-                            <option value="0">Bez limitu</option>
-                        </select>
-                    </div>
-                </div>
             </div>
 
-            <!-- Amenities -->
             <div class="form-card">
                 <h2 class="form-card-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -653,63 +473,133 @@
                     Udogodnienia
                 </h2>
 
-                <div class="amenities-grid">
-                    <label class="amenity-checkbox">
-                        <input type="checkbox" checked>
-                        <span>Wi-Fi</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox" checked>
-                        <span>Kuchnia</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox" checked>
-                        <span>Pralka</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox">
-                        <span>Klimatyzacja</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox" checked>
-                        <span>Telewizor</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox">
-                        <span>Parking</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox">
-                        <span>Balkon / Taras</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox">
-                        <span>Winda</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox">
-                        <span>Przyjazne zwierzętom</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox">
-                        <span>Dla palących</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox" checked>
-                        <span>Żelazko</span>
-                    </label>
-                    <label class="amenity-checkbox">
-                        <input type="checkbox" checked>
-                        <span>Suszarka do włosów</span>
-                    </label>
+                <div class="amenities-grid" id="amenitiesGrid">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Ładowanie...</p>
+                    </div>
                 </div>
             </div>
 
             <div class="btn-row">
-                <button type="button" class="btn btn-secondary">Zapisz jako szkic</button>
-                <button type="submit" class="btn btn-primary">Opublikuj miejsce</button>
+                <a href="my-places.html" class="btn btn-secondary">Anuluj</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Opublikuj miejsce</button>
             </div>
         </form>
     </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let cities = [];
+        let amenities = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthUI();
+            checkAccess();
+        });
+
+        function checkAccess() {
+            if (!api.isLoggedIn()) {
+                document.getElementById('loginNotice').style.display = 'block';
+                return;
+            }
+
+            if (api.user && (api.user.role === 'HOST' || api.user.role === 'ADMIN')) {
+                document.getElementById('addPlaceForm').style.display = 'block';
+                loadFormData();
+            } else {
+                document.getElementById('hostUpgradeNotice').style.display = 'block';
+            }
+        }
+
+        async function loadFormData() {
+            try {
+                [cities, amenities] = await Promise.all([
+                    api.getCities(),
+                    api.getAmenities()
+                ]);
+                renderCities();
+                renderAmenities();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function renderCities() {
+            const select = document.getElementById('cityId');
+            select.innerHTML = '<option value="">Wybierz miasto</option>' +
+                cities.map(city => `<option value="${city.id}">${city.name}</option>`).join('');
+        }
+
+        function renderAmenities() {
+            const container = document.getElementById('amenitiesGrid');
+            container.innerHTML = amenities.map(amenity => `
+                <label class="amenity-checkbox">
+                    <input type="checkbox" name="amenities" value="${amenity.id}">
+                    <span>${amenity.name}</span>
+                </label>
+            `).join('');
+        }
+
+        async function upgradeToHost() {
+            try {
+                const updatedUser = await api.upgradeToHost();
+                api.user = updatedUser;
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                updateAuthUI();
+                showToast('Gratulacje! Jesteś teraz gospodarzem.', 'success');
+                document.getElementById('hostUpgradeNotice').style.display = 'none';
+                document.getElementById('addPlaceForm').style.display = 'block';
+                loadFormData();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        document.getElementById('addPlaceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Publikowanie...';
+
+            const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked'))
+                .map(cb => parseInt(cb.value));
+
+            const data = {
+                name: document.getElementById('name').value,
+                type: document.getElementById('type').value,
+                cityId: parseInt(document.getElementById('cityId').value),
+                address: document.getElementById('address').value,
+                description: document.getElementById('description').value,
+                maxGuests: parseInt(document.getElementById('maxGuests').value),
+                bedrooms: parseInt(document.getElementById('bedrooms').value),
+                bathrooms: parseInt(document.getElementById('bathrooms').value),
+                pricePerNight: parseFloat(document.getElementById('pricePerNight').value),
+                cleaningFee: parseFloat(document.getElementById('cleaningFee').value) || 0,
+                amenityIds: selectedAmenities
+            };
+
+            try {
+                const place = await api.createPlace(data);
+                showToast('Miejsce zostało opublikowane!', 'success');
+                setTimeout(() => {
+                    window.location.href = `hotel.html?id=${place.id}`;
+                }, 1500);
+            } catch (error) {
+                showToast(error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Opublikuj miejsce';
+            }
+        });
+
+        function showToast(message, type = '') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
 </body>
 </html>

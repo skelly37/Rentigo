@@ -959,8 +959,12 @@
                             <span id="priceCalculation"></span>
                             <span id="subtotal"></span>
                         </div>
+                        <div class="booking-row" id="cleaningFeeRow" style="display: none;">
+                            <span>Opłata za sprzątanie</span>
+                            <span id="cleaningFeeAmount"></span>
+                        </div>
                         <div class="booking-row">
-                            <span>Opłata serwisowa</span>
+                            <span>Opłata serwisowa (5%)</span>
                             <span id="serviceFee"></span>
                         </div>
                         <div class="booking-total">
@@ -1484,11 +1488,20 @@
 
             const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
             const subtotal = place.pricePerNight * nights;
+            const cleaningFee = place.cleaningFee || 0;
             const serviceFee = Math.round(subtotal * 0.05);
-            const total = subtotal + serviceFee;
+            const total = subtotal + cleaningFee + serviceFee;
 
             document.getElementById('priceCalculation').textContent = `${formatPrice(place.pricePerNight)} × ${nights} ${nights === 1 ? 'noc' : 'noce'}`;
             document.getElementById('subtotal').textContent = formatPrice(subtotal);
+
+            if (cleaningFee > 0) {
+                document.getElementById('cleaningFeeRow').style.display = 'flex';
+                document.getElementById('cleaningFeeAmount').textContent = formatPrice(cleaningFee);
+            } else {
+                document.getElementById('cleaningFeeRow').style.display = 'none';
+            }
+
             document.getElementById('serviceFee').textContent = formatPrice(serviceFee);
             document.getElementById('totalPrice').textContent = formatPrice(total);
         }

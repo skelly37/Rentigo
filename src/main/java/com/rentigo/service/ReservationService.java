@@ -22,7 +22,7 @@ public class ReservationService {
     private final UserService userService;
     private final NotificationService notificationService;
 
-    private static final BigDecimal SERVICE_FEE_RATE = new BigDecimal("0.10");
+    private static final BigDecimal SERVICE_FEE_RATE = new BigDecimal("0.05");
 
     public ReservationDto toDto(Reservation reservation) {
         return ReservationDto.builder()

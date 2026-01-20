@@ -1,23 +1,448 @@
 # Rentigo - Platforma do wynajmowania miejsc noclegowych
 
-Rentigo to platforma internetowa umożliwiająca użytkownikom wyszukiwanie miejsc noclegowych w różnych miastach, a także dodawanie ogłoszeń przez właścicieli mieszkań.
+Rentigo to nowoczesna platforma internetowa umożliwiająca użytkownikom wyszukiwanie i rezerwację miejsc noclegowych w różnych miastach Polski, a także dodawanie ogłoszeń przez właścicieli nieruchomości.
+
+## Spis treści
+- [Wybór technologii](#wybór-technologii)
+- [Architektura](#architektura)
+- [Diagram ERD](#diagram-erd)
+- [Funkcjonalności](#funkcjonalności)
+- [Role użytkowników](#role-użytkowników)
+- [Instrukcja uruchomienia](#instrukcja-uruchomienia)
+- [Dokumentacja API](#dokumentacja-api)
+- [Struktura projektu](#struktura-projektu)
 
 ## Wybór technologii
 
-### Backend:
-- **Java (Spring Boot)** - Wybór Javy jako technologii backendowej wynika z jej popularności i szerokiego wsparcia dla rozwoju aplikacji webowych. Spring Boot jest frameworkiem, który pozwala na szybkie tworzenie aplikacji, zapewniając łatwą konfigurację i integrację z bazą danych, co jest kluczowe w przypadku naszego systemu.
-- **Baza danych (PostgreSQL)** - Relacyjna baza danych, w której przechowywane będą informacje o użytkownikach, ogłoszeniach, transakcjach i komunikacji. PostgreSQL został wybrany ze względu na swoje stabilność, wsparcie dla zaawansowanych operacji SQL oraz możliwość łatwej integracji z Java i Spring Boot.
+### Backend
 
-### Frontend:
-- **React** - React został wybrany jako framework frontendowy ze względu na swoją wydajność, komponentową strukturę oraz popularność wśród developerów. Dzięki Reactowi możemy tworzyć dynamiczne i interaktywne interfejsy użytkownika, co jest niezbędne w aplikacji, gdzie użytkownicy mogą przeglądać oferty w czasie rzeczywistym i wchodzić w interakcje z właścicielami mieszkań.
-    - **React Router** - Do nawigacji po aplikacji. Pozwoli na wygodne przechodzenie między stronami bez konieczności przeładowania całej strony.
-    - **Axios** - Używany do komunikacji z backendem. Dzięki Axios użytkownicy będą mogli bezpiecznie i efektywnie pobierać i wysyłać dane do backendu.
+| Technologia | Wersja | Uzasadnienie |
+|-------------|--------|--------------|
+| **Java** | 17 | Stabilność, wydajność, bogaty ekosystem bibliotek i szeroka społeczność |
+| **Spring Boot** | 2.7.18 | Szybkie tworzenie aplikacji, autowiring, bogata integracja z bazami danych i systemami kolejkowymi |
+| **Spring Security** | 5.7.x | Kompleksowe rozwiązanie do uwierzytelniania i autoryzacji |
+| **Spring Data JPA** | 2.7.x | Uproszczony dostęp do bazy danych, automatyczne generowanie zapytań |
+| **PostgreSQL** | 15+ | Stabilna relacyjna baza danych, wsparcie dla JSON, zaawansowane indeksowanie |
+| **JWT (jjwt)** | 0.11.5 | Bezstanowe uwierzytelnianie, skalowalność, bezpieczeństwo |
+| **RabbitMQ** | 3.x | Asynchroniczne przetwarzanie powiadomień, niezawodność, wsparcie dla wzorców pub/sub |
+| **Lombok** | 1.18.x | Redukcja boilerplate code, czytelniejszy kod |
+| **SpringDoc OpenAPI** | 1.7.0 | Automatyczna generacja dokumentacji API, Swagger UI |
 
-### Dodatkowe narzędzia:
-- **JWT (JSON Web Token)** - Do implementacji uwierzytelniania i autoryzacji. JWT pozwala na bezpieczne zarządzanie sesjami użytkowników oraz zapewnia, że tylko autoryzowani użytkownicy będą mieli dostęp do odpowiednich funkcji.
-- **Swagger/OpenAPI** - Do dokumentacji API. Dzięki Swaggerowi frontend i backend będą mogły się łatwo komunikować, a dokumentacja będzie zawsze aktualna i dostępna.
-- **Bootstrap** - Framework CSS, który pozwoli na szybkie i łatwe tworzenie responsywnych, estetycznych interfejsów użytkownika.
+### Frontend
 
+| Technologia | Uzasadnienie |
+|-------------|--------------|
+| **Vanilla JavaScript** | Lekkość, brak dodatkowych zależności, szybkie ładowanie |
+| **HTML5/CSS3** | Semantyczne znaczniki, responsywny design, Flexbox/Grid |
+| **Fetch API** | Natywna obsługa HTTP, Promise-based, czysty kod |
 
-## Projekt interfejsu (implementacja w następnych wydaniach)
-![](./design/start.png)
+### Dodatkowe narzędzia
+
+- **Maven** - Zarządzanie zależnościami i budowanie projektu
+- **Git** - System kontroli wersji
+- **Docker** (opcjonalnie) - Konteneryzacja aplikacji
+
+## Architektura
+
+Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                        │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              HTML / CSS / JavaScript                 │    │
+│  │         (login, search, hotel, profile, etc.)       │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     CONTROLLER LAYER                         │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │   Auth   │ │  Place   │ │Reservation│ │  Review  │       │
+│  │Controller│ │Controller│ │Controller │ │Controller│       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │   User   │ │ Favorite │ │   City   │ │ Amenity  │       │
+│  │Controller│ │Controller│ │Controller│ │Controller│       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      SERVICE LAYER                           │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │   User   │ │  Place   │ │Reservation│ │  Review  │       │
+│  │ Service  │ │ Service  │ │  Service  │ │ Service  │       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│  ┌──────────────────┐  ┌──────────────────────────┐        │
+│  │ FavoriteService  │  │   NotificationService    │        │
+│  └──────────────────┘  └──────────────────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    REPOSITORY LAYER                          │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │   User   │ │  Place   │ │Reservation│ │  Review  │       │
+│  │Repository│ │Repository│ │Repository │ │Repository│       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      DATA LAYER                              │
+│  ┌─────────────────────┐  ┌─────────────────────┐          │
+│  │     PostgreSQL      │  │      RabbitMQ       │          │
+│  │   (Persistence)     │  │  (Message Queue)    │          │
+│  └─────────────────────┘  └─────────────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Przepływ JWT Authentication
+
+```
+┌──────────┐     POST /api/auth/login      ┌──────────┐
+│  Client  │ ─────────────────────────────▶│  Server  │
+│          │   {email, password}           │          │
+│          │                               │          │
+│          │◀───────────────────────────── │          │
+│          │   {token, user}               │          │
+│          │                               │          │
+│          │   GET /api/places             │          │
+│          │ ─────────────────────────────▶│          │
+│          │   Authorization: Bearer <JWT> │          │
+│          │                               │          │
+│          │◀───────────────────────────── │          │
+└──────────┘   {places data}               └──────────┘
+```
+
+## Diagram ERD
+
+```
+┌───────────────────┐       ┌───────────────────┐       ┌───────────────────┐
+│      users        │       │      places       │       │      cities       │
+├───────────────────┤       ├───────────────────┤       ├───────────────────┤
+│ PK id             │       │ PK id             │       │ PK id             │
+│    email (unique) │       │ FK host_id ───────┼───────│    name           │
+│    password       │       │ FK city_id ───────┼───────│    country        │
+│    first_name     │       │    name           │       │    created_at     │
+│    last_name      │       │    description    │       └───────────────────┘
+│    phone          │       │    address        │
+│    role           │       │    type           │       ┌───────────────────┐
+│    avatar_url     │       │    price_per_night│       │    amenities      │
+│    created_at     │       │    max_guests     │       ├───────────────────┤
+│    updated_at     │       │    bedrooms       │       │ PK id             │
+└────────┬──────────┘       │    bathrooms      │       │    name           │
+         │                  │    area           │       │    icon           │
+         │                  │    status         │       └─────────┬─────────┘
+         │                  │    created_at     │                 │
+         │                  │    updated_at     │                 │
+         │                  └─────────┬─────────┘                 │
+         │                            │                           │
+         │                            │     ┌─────────────────────┘
+         │                            │     │
+         │                  ┌─────────┴─────┴─────┐
+         │                  │   place_amenities   │
+         │                  ├─────────────────────┤
+         │                  │ FK place_id         │
+         │                  │ FK amenity_id       │
+         │                  └─────────────────────┘
+         │
+         │                  ┌───────────────────┐
+         │                  │   place_images    │
+         │                  ├───────────────────┤
+         │                  │ PK id             │
+         │                  │ FK place_id ──────┼──────┐
+         │                  │    url            │      │
+         │                  │    is_main        │      │
+         │                  │    display_order  │      │
+         │                  └───────────────────┘      │
+         │                                             │
+         ├─────────────────────────────────────────────┤
+         │                                             │
+         │                  ┌───────────────────┐      │
+         ├──────────────────┤   reservations    │      │
+         │                  ├───────────────────┤      │
+         │                  │ PK id             │      │
+         │                  │ FK user_id ───────┼──────┤
+         │                  │ FK place_id ──────┼──────┘
+         │                  │    reservation_num│
+         │                  │    check_in       │
+         │                  │    check_out      │
+         │                  │    guests         │
+         │                  │    total_price    │
+         │                  │    status         │
+         │                  │    created_at     │
+         │                  └───────────────────┘
+         │
+         │                  ┌───────────────────┐
+         ├──────────────────┤     reviews       │
+         │                  ├───────────────────┤
+         │                  │ PK id             │
+         │                  │ FK user_id ───────┤
+         │                  │ FK place_id ──────┤
+         │                  │    rating         │
+         │                  │    cleanliness    │
+         │                  │    location       │
+         │                  │    value          │
+         │                  │    communication  │
+         │                  │    comment        │
+         │                  │    created_at     │
+         │                  └───────────────────┘
+         │
+         │                  ┌───────────────────┐
+         └──────────────────┤    favorites      │
+                            ├───────────────────┤
+                            │ PK id             │
+                            │ FK user_id        │
+                            │ FK place_id       │
+                            │    created_at     │
+                            └───────────────────┘
+
+┌───────────────────┐
+│ contact_messages  │
+├───────────────────┤
+│ PK id             │
+│    first_name     │
+│    last_name      │
+│    email          │
+│    subject        │
+│    message        │
+│    read           │
+│    created_at     │
+└───────────────────┘
+```
+
+### Tabele w bazie danych (9 tabel + 1 junction)
+
+| Tabela | Opis | Liczba rekordów (seed) |
+|--------|------|------------------------|
+| users | Użytkownicy systemu | 7 |
+| cities | Miasta dostępne w systemie | 6 |
+| amenities | Udogodnienia dostępne dla miejsc | 12 |
+| places | Miejsca noclegowe | 12 |
+| place_amenities | Relacja many-to-many places-amenities | ~50 |
+| place_images | Zdjęcia miejsc | ~24 |
+| reservations | Rezerwacje | 8 |
+| reviews | Recenzje miejsc | 11 |
+| favorites | Ulubione miejsca użytkowników | 8 |
+| contact_messages | Wiadomości z formularza kontaktowego | 0 |
+
+**Łącznie: 30+ rekordów testowych**
+
+## Funkcjonalności
+
+### Zaimplementowane
+
+| Funkcjonalność | Status | Opis |
+|----------------|--------|------|
+| Rejestracja użytkownika | ✅ | Tworzenie nowego konta z walidacją |
+| Logowanie | ✅ | Uwierzytelnianie JWT |
+| Wyszukiwanie miejsc | ✅ | Po mieście, liczbie gości |
+| Przeglądanie ofert | ✅ | Lista wszystkich miejsc |
+| Szczegóły miejsca | ✅ | Pełne informacje, zdjęcia, recenzje |
+| Rezerwacja | ✅ | Tworzenie rezerwacji z walidacją dat |
+| Moje rezerwacje | ✅ | Lista rezerwacji użytkownika |
+| Anulowanie rezerwacji | ✅ | Możliwość anulowania |
+| Recenzje | ✅ | Dodawanie ocen miejsc |
+| Ulubione | ✅ | Dodawanie/usuwanie z ulubionych |
+| Panel gospodarza | ✅ | Zarządzanie własnymi miejscami |
+| Dodawanie miejsca | ✅ | Tworzenie nowego ogłoszenia |
+| Edycja miejsca | ✅ | Aktualizacja istniejącego ogłoszenia |
+| Profil użytkownika | ✅ | Edycja danych osobowych |
+| Upgrade do HOST | ✅ | Zmiana roli na gospodarza |
+| Formularz kontaktowy | ✅ | Wysyłanie wiadomości |
+| Powiadomienia async | ✅ | RabbitMQ dla powiadomień |
+| Dokumentacja API | ✅ | Swagger UI |
+
+## Role użytkowników
+
+| Rola | Uprawnienia |
+|------|-------------|
+| **USER** | Przeglądanie miejsc, rezerwacje, recenzje, ulubione |
+| **HOST** | Wszystko co USER + dodawanie/edycja miejsc, zarządzanie rezerwacjami |
+| **ADMIN** | Pełny dostęp do systemu |
+
+## Instrukcja uruchomienia
+
+### Wymagania
+
+- Java 17+
+- Maven 3.8+
+- PostgreSQL 15+
+- RabbitMQ 3.x (opcjonalnie)
+
+### Krok 1: Konfiguracja bazy danych
+
+```sql
+-- Utwórz bazę danych
+CREATE DATABASE rentigo;
+
+-- Utwórz użytkownika (opcjonalnie)
+CREATE USER rentigo_user WITH PASSWORD 'rentigo_password';
+GRANT ALL PRIVILEGES ON DATABASE rentigo TO rentigo_user;
+```
+
+### Krok 2: Konfiguracja aplikacji
+
+Edytuj `src/main/resources/application.properties`:
+
+```properties
+# Dostosuj dane dostępowe do bazy danych
+spring.datasource.url=jdbc:postgresql://localhost:5432/rentigo
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+
+# Opcjonalnie: RabbitMQ
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
+```
+
+### Krok 3: Uruchomienie aplikacji
+
+```bash
+# Zbuduj projekt
+mvn clean install
+
+# Uruchom aplikację
+mvn spring-boot:run
+```
+
+Aplikacja będzie dostępna pod adresem: http://localhost:8080
+
+### Krok 4: Dostęp do dokumentacji API
+
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- OpenAPI JSON: http://localhost:8080/api-docs
+
+### Domyślne konta testowe
+
+| Email | Hasło | Rola |
+|-------|-------|------|
+| admin@rentigo.pl | admin123 | ADMIN |
+| jan.kowalski@email.com | password123 | HOST |
+| anna.nowak@email.com | password123 | HOST |
+| piotr.wisniewski@email.com | password123 | USER |
+| maria.dabrowska@email.com | password123 | USER |
+
+## Dokumentacja API
+
+### Endpointy autoryzacji
+
+| Metoda | Endpoint | Opis |
+|--------|----------|------|
+| POST | `/api/auth/register` | Rejestracja nowego użytkownika |
+| POST | `/api/auth/login` | Logowanie, zwraca JWT token |
+
+### Endpointy użytkowników
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/users/me` | Pobierz dane zalogowanego użytkownika | ✅ |
+| PUT | `/api/users/me` | Aktualizuj dane użytkownika | ✅ |
+| POST | `/api/users/me/upgrade-to-host` | Upgrade do roli HOST | ✅ |
+
+### Endpointy miejsc
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/places` | Lista wszystkich miejsc | ❌ |
+| GET | `/api/places/{id}` | Szczegóły miejsca | ❌ |
+| GET | `/api/places/search` | Wyszukiwanie po nazwie | ❌ |
+| GET | `/api/places/city/{cityId}` | Miejsca w mieście | ❌ |
+| POST | `/api/places` | Utwórz nowe miejsce | ✅ HOST |
+| PUT | `/api/places/{id}` | Aktualizuj miejsce | ✅ HOST |
+
+### Endpointy rezerwacji
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/reservations` | Moje rezerwacje | ✅ |
+| GET | `/api/reservations/upcoming` | Nadchodzące rezerwacje | ✅ |
+| GET | `/api/reservations/past` | Przeszłe rezerwacje | ✅ |
+| GET | `/api/reservations/cancelled` | Anulowane rezerwacje | ✅ |
+| POST | `/api/reservations` | Utwórz rezerwację | ✅ |
+| POST | `/api/reservations/{id}/cancel` | Anuluj rezerwację | ✅ |
+| POST | `/api/reservations/{id}/confirm` | Potwierdź rezerwację | ✅ HOST |
+
+### Endpointy recenzji
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/reviews/place/{placeId}` | Recenzje miejsca | ❌ |
+| GET | `/api/reviews/place/{placeId}/summary` | Podsumowanie ocen | ❌ |
+| POST | `/api/reviews` | Dodaj recenzję | ✅ |
+
+### Endpointy ulubionych
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/favorites` | Moje ulubione | ✅ |
+| POST | `/api/favorites/{placeId}/toggle` | Toggle ulubione | ✅ |
+
+### Endpointy gospodarza
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/host/places` | Moje miejsca | ✅ HOST |
+| GET | `/api/host/stats` | Statystyki gospodarza | ✅ HOST |
+
+### Pozostałe endpointy
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/cities` | Lista miast | ❌ |
+| GET | `/api/amenities` | Lista udogodnień | ❌ |
+| POST | `/api/contact` | Wyślij wiadomość | ❌ |
+
+## Struktura projektu
+
+```
+rentigo/
+├── src/
+│   ├── main/
+│   │   ├── java/com/rentigo/
+│   │   │   ├── config/           # Konfiguracja Spring
+│   │   │   │   ├── DataLoader.java
+│   │   │   │   ├── GlobalExceptionHandler.java
+│   │   │   │   ├── OpenApiConfig.java
+│   │   │   │   ├── RabbitMQConfig.java
+│   │   │   │   └── SecurityConfig.java
+│   │   │   ├── controller/       # REST Controllers
+│   │   │   │   ├── AuthController.java
+│   │   │   │   ├── PlaceController.java
+│   │   │   │   ├── ReservationController.java
+│   │   │   │   └── ...
+│   │   │   ├── dto/              # Data Transfer Objects
+│   │   │   │   ├── request/
+│   │   │   │   └── response/
+│   │   │   ├── entity/           # JPA Entities
+│   │   │   │   ├── User.java
+│   │   │   │   ├── Place.java
+│   │   │   │   └── ...
+│   │   │   ├── repository/       # Spring Data Repositories
+│   │   │   ├── security/         # JWT Security
+│   │   │   │   ├── JwtTokenProvider.java
+│   │   │   │   ├── JwtAuthenticationFilter.java
+│   │   │   │   └── ...
+│   │   │   └── service/          # Business Logic
+│   │   │       ├── UserService.java
+│   │   │       ├── PlaceService.java
+│   │   │       └── ...
+│   │   └── resources/
+│   │       ├── static/           # Frontend
+│   │       │   ├── css/
+│   │       │   ├── js/
+│   │       │   └── *.html
+│   │       └── application.properties
+│   └── test/                     # Testy
+├── pom.xml
+└── README.md
+```
+
+## Licencja
+
+Projekt edukacyjny.

@@ -5,19 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rentigo - Mój profil</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f5f5;
-            min-height: 100vh;
-        }
-
         .header {
             background: #1a1a2e;
             display: flex;
@@ -57,12 +46,25 @@
             opacity: 1;
         }
 
-        .user-menu {
+        .header-icon {
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
             color: white;
-            cursor: pointer;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+            text-decoration: none;
+        }
+
+        .header-icon:hover {
+            opacity: 1;
+        }
+
+        .header-icon svg {
+            width: 24px;
+            height: 24px;
         }
 
         .user-avatar {
@@ -75,6 +77,26 @@
             justify-content: center;
             font-weight: 600;
             font-size: 16px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: white;
+            color: #333;
         }
 
         .profile-container {
@@ -125,6 +147,17 @@
             color: #666;
         }
 
+        .profile-role {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 12px;
+            background: #fff3e6;
+            color: #e67e22;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         .profile-menu {
             list-style: none;
         }
@@ -133,7 +166,8 @@
             margin-bottom: 4px;
         }
 
-        .profile-menu a {
+        .profile-menu a,
+        .profile-menu button {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -143,9 +177,15 @@
             border-radius: 8px;
             transition: all 0.2s;
             font-size: 15px;
+            width: 100%;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: inherit;
         }
 
-        .profile-menu a:hover {
+        .profile-menu a:hover,
+        .profile-menu button:hover {
             background: #f5f5f5;
             color: #333;
         }
@@ -156,7 +196,8 @@
             font-weight: 500;
         }
 
-        .profile-menu a svg {
+        .profile-menu a svg,
+        .profile-menu button svg {
             width: 20px;
             height: 20px;
         }
@@ -201,10 +242,6 @@
 
         .form-group {
             margin-bottom: 20px;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
         }
 
         .form-label {
@@ -253,41 +290,6 @@
             justify-content: flex-end;
         }
 
-        .btn {
-            padding: 14px 28px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background: #e67e22;
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: #d35400;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-secondary:hover {
-            border-color: #ccc;
-            color: #333;
-        }
-
-        .password-section {
-            margin-top: 30px;
-        }
-
         .avatar-upload {
             display: flex;
             align-items: center;
@@ -319,17 +321,34 @@
             font-size: 14px;
         }
 
-        .alert {
-            padding: 14px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .upgrade-card {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            color: white;
+        }
+
+        .upgrade-card h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .upgrade-card p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .upgrade-card .btn {
+            background: white;
+            color: #e67e22;
+            padding: 10px 20px;
             font-size: 14px;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .upgrade-card .btn:hover {
+            background: #f5f5f5;
         }
 
         @media (max-width: 900px) {
@@ -376,23 +395,23 @@
                 <a href="add-place.html">Dodaj miejsce</a>
                 <a href="contact.html">Kontakt</a>
             </nav>
-            <a href="favorites.html" class="user-menu" title="Ulubione" style="margin-right: -10px;">
-                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="favorites.html" class="header-icon" title="Ulubione">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
             </a>
-            <a href="profile.html" class="user-menu">
-                <div class="user-avatar">JK</div>
-            </a>
+            <a href="profile.html" class="user-avatar" style="display: none;"></a>
+            <a href="login.html" class="login-btn">Zaloguj się</a>
         </div>
     </header>
 
-    <div class="profile-container">
+    <div class="profile-container" id="mainContent" style="display: none;">
         <aside class="profile-sidebar">
             <div class="profile-avatar-section">
-                <div class="profile-avatar-large">JK</div>
-                <h2 class="profile-name">Jan Kowalski</h2>
-                <p class="profile-email">jan.kowalski@email.com</p>
+                <div class="profile-avatar-large" id="sidebarAvatar"></div>
+                <h2 class="profile-name" id="sidebarName"></h2>
+                <p class="profile-email" id="sidebarEmail"></p>
+                <span class="profile-role" id="sidebarRole"></span>
             </div>
 
             <ul class="profile-menu">
@@ -420,7 +439,7 @@
                         Ulubione
                     </a>
                 </li>
-                <li>
+                <li id="myPlacesLink" style="display: none;">
                     <a href="my-places.html">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -429,29 +448,36 @@
                     </a>
                 </li>
                 <li>
-                    <a href="index.html" class="logout">
+                    <button class="logout" onclick="handleLogout()">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
                         Wyloguj się
-                    </a>
+                    </button>
                 </li>
             </ul>
+
+            <div class="upgrade-card" id="upgradeCard" style="display: none;">
+                <h4>Zostań gospodarzem</h4>
+                <p>Zarabiaj wynajmując swoje miejsce na Rentigo!</p>
+                <button class="btn" onclick="upgradeToHost()">Zostań gospodarzem</button>
+            </div>
         </aside>
 
         <main class="profile-content">
             <h1 class="section-title">Dane osobowe</h1>
             <p class="section-subtitle">Zarządzaj swoimi danymi osobowymi i ustawieniami konta</p>
 
-            <div class="alert alert-success" style="display: none;" id="success-alert">
+            <div class="alert alert-success" style="display: none;" id="successAlert">
                 Zmiany zostały zapisane pomyślnie!
             </div>
+            <div class="alert alert-error" style="display: none;" id="errorAlert"></div>
 
-            <form onsubmit="return false;">
+            <form id="profileForm">
                 <div class="avatar-upload">
-                    <div class="avatar-upload-preview">JK</div>
+                    <div class="avatar-upload-preview" id="formAvatar"></div>
                     <div class="avatar-upload-actions">
-                        <button type="button" class="btn btn-secondary btn-small">Zmień zdjęcie</button>
+                        <button type="button" class="btn btn-secondary btn-small" disabled>Zmień zdjęcie</button>
                         <span class="form-hint">JPG, PNG. Maksymalnie 2MB.</span>
                     </div>
                 </div>
@@ -459,23 +485,23 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Imię</label>
-                        <input type="text" class="form-input" value="Jan">
+                        <input type="text" class="form-input" id="firstName" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nazwisko</label>
-                        <input type="text" class="form-input" value="Kowalski">
+                        <input type="text" class="form-input" id="lastName" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Adres e-mail</label>
-                    <input type="email" class="form-input" value="jan.kowalski@email.com">
+                    <input type="email" class="form-input" id="email" required>
                     <p class="form-hint">Na ten adres będziemy wysyłać potwierdzenia rezerwacji</p>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Numer telefonu</label>
-                    <input type="tel" class="form-input" value="+48 123 456 789" placeholder="+48 000 000 000">
+                    <input type="tel" class="form-input" id="phone" placeholder="+48 000 000 000">
                 </div>
 
                 <div class="divider"></div>
@@ -485,28 +511,191 @@
 
                 <div class="form-group">
                     <label class="form-label">Obecne hasło</label>
-                    <input type="password" class="form-input" placeholder="Wprowadź obecne hasło">
+                    <input type="password" class="form-input" id="currentPassword" placeholder="Wprowadź obecne hasło">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Nowe hasło</label>
-                        <input type="password" class="form-input" placeholder="Minimum 8 znaków">
+                        <input type="password" class="form-input" id="newPassword" placeholder="Minimum 8 znaków">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Powtórz nowe hasło</label>
-                        <input type="password" class="form-input" placeholder="Powtórz nowe hasło">
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="Powtórz nowe hasło">
                     </div>
                 </div>
 
                 <div class="divider"></div>
 
                 <div class="btn-row">
-                    <button type="button" class="btn btn-secondary">Anuluj</button>
-                    <button type="submit" class="btn btn-primary" onclick="document.getElementById('success-alert').style.display='block';">Zapisz zmiany</button>
+                    <button type="button" class="btn btn-secondary" onclick="loadUserData()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Zapisz zmiany</button>
                 </div>
             </form>
         </main>
     </div>
+
+    <div id="loadingState" class="profile-container">
+        <div class="loading-state" style="grid-column: 1 / -1;">
+            <div class="spinner"></div>
+            <p>Ładowanie profilu...</p>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!api.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            updateAuthUI();
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            try {
+                currentUser = await api.getMe();
+                renderProfile();
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'grid';
+            } catch (error) {
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="error-state" style="grid-column: 1 / -1;">
+                        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3>Wystąpił błąd</h3>
+                        <p>${error.message}</p>
+                        <button onclick="location.reload()" class="btn btn-primary">Spróbuj ponownie</button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderProfile() {
+            const initials = (currentUser.firstName?.charAt(0) || '') + (currentUser.lastName?.charAt(0) || '');
+            const fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+
+            document.getElementById('sidebarAvatar').textContent = initials;
+            document.getElementById('sidebarName').textContent = fullName || 'Użytkownik';
+            document.getElementById('sidebarEmail').textContent = currentUser.email;
+            document.getElementById('formAvatar').textContent = initials;
+
+            const roleNames = {
+                'ADMIN': 'Administrator',
+                'HOST': 'Gospodarz',
+                'USER': 'Użytkownik'
+            };
+            document.getElementById('sidebarRole').textContent = roleNames[currentUser.role] || currentUser.role;
+
+            if (currentUser.role === 'HOST' || currentUser.role === 'ADMIN') {
+                document.getElementById('myPlacesLink').style.display = 'block';
+                document.getElementById('upgradeCard').style.display = 'none';
+            } else {
+                document.getElementById('myPlacesLink').style.display = 'none';
+                document.getElementById('upgradeCard').style.display = 'block';
+            }
+
+            document.getElementById('firstName').value = currentUser.firstName || '';
+            document.getElementById('lastName').value = currentUser.lastName || '';
+            document.getElementById('email').value = currentUser.email || '';
+            document.getElementById('phone').value = currentUser.phone || '';
+
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            const saveBtn = document.getElementById('saveBtn');
+
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword && newPassword !== confirmPassword) {
+                errorAlert.textContent = 'Hasła nie są identyczne';
+                errorAlert.style.display = 'block';
+                return;
+            }
+
+            if (newPassword && newPassword.length < 8) {
+                errorAlert.textContent = 'Hasło musi mieć minimum 8 znaków';
+                errorAlert.style.display = 'block';
+                return;
+            }
+
+            const data = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value || null
+            };
+
+            if (newPassword) {
+                data.password = newPassword;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Zapisywanie...';
+
+            try {
+                const updatedUser = await api.updateMe(data);
+                currentUser = updatedUser;
+
+                api.user = updatedUser;
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                renderProfile();
+                updateAuthUI();
+
+                successAlert.style.display = 'block';
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                errorAlert.textContent = error.message;
+                errorAlert.style.display = 'block';
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Zapisz zmiany';
+            }
+        });
+
+        async function upgradeToHost() {
+            try {
+                const updatedUser = await api.upgradeToHost();
+                currentUser = updatedUser;
+                api.user = updatedUser;
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                renderProfile();
+                showToast('Gratulacje! Jesteś teraz gospodarzem.', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function handleLogout() {
+            api.clearAuth();
+            window.location.href = 'index.html';
+        }
+
+        function showToast(message, type = '') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
 </body>
 </html>

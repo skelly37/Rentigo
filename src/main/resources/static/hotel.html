@@ -263,6 +263,9 @@
             font-size: 15px;
             color: #555;
             line-height: 1.7;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
         }
 
         .features-grid {
@@ -316,33 +319,68 @@
 
         .host-info {
             display: flex;
-            align-items: center;
-            gap: 16px;
+            align-items: flex-start;
+            gap: 20px;
         }
 
         .host-avatar {
-            width: 64px;
-            height: 64px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: #e67e22;
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 24px;
+            font-size: 28px;
             color: white;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .host-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .host-details {
+            flex: 1;
         }
 
         .host-details h4 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
 
         .host-details p {
             font-size: 14px;
             color: #666;
+            margin-bottom: 4px;
+        }
+
+        .host-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .host-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .host-stat svg {
+            width: 16px;
+            height: 16px;
+            color: #e67e22;
         }
 
         .host-badge {
@@ -420,6 +458,36 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 12px;
+            gap: 16px;
+        }
+
+        .review-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .review-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-delete-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .review-delete-btn:hover {
+            background: #dc3545;
+            color: white;
         }
 
         .review-author {
@@ -541,6 +609,13 @@
         .booking-price-period {
             font-size: 15px;
             color: #666;
+        }
+
+        .booking-price-details {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+            margin-bottom: 16px;
         }
 
         .booking-form {
@@ -835,7 +910,9 @@
                         <div class="host-avatar" id="hostAvatar"></div>
                         <div class="host-details">
                             <h4 id="hostName"></h4>
+                            <p id="hostRole"></p>
                             <p id="hostSince"></p>
+                            <div class="host-stats" id="hostStats"></div>
                         </div>
                     </div>
                 </div>
@@ -857,6 +934,7 @@
                         <span class="booking-price-amount" id="priceAmount"></span>
                         <span class="booking-price-period">/ noc</span>
                     </div>
+                    <div class="booking-price-details" id="cleaningFeeInfo"></div>
 
                     <form class="booking-form" id="bookingForm">
                         <div class="booking-dates">
@@ -984,6 +1062,12 @@
             document.getElementById('placeDescription').innerHTML = place.description ? place.description.replace(/\n/g, '<br>') : 'Brak opisu';
             document.getElementById('priceAmount').textContent = formatPrice(place.pricePerNight);
 
+            if (place.cleaningFee && place.cleaningFee > 0) {
+                document.getElementById('cleaningFeeInfo').textContent = `+ ${formatPrice(place.cleaningFee)} opłata za sprzątanie`;
+            } else {
+                document.getElementById('cleaningFeeInfo').textContent = 'Bez opłaty za sprzątanie';
+            }
+
             if (place.rating) {
                 document.getElementById('ratingBar').style.display = 'flex';
                 document.getElementById('ratingScore').textContent = place.rating.toFixed(1);
@@ -1038,11 +1122,106 @@
                 `).join('');
             }
 
-            if (place.host) {
-                const initials = (place.host.firstName?.charAt(0) || '') + (place.host.lastName?.charAt(0) || '');
-                document.getElementById('hostAvatar').textContent = initials || 'H';
-                document.getElementById('hostName').textContent = `${place.host.firstName || ''} ${place.host.lastName || ''}`;
-                document.getElementById('hostSince').textContent = 'Gospodarz';
+            if (place.owner) {
+                const owner = place.owner;
+                const initials = owner.initials || ((owner.firstName?.charAt(0) || '') + (owner.lastName?.charAt(0) || ''));
+
+                const avatarEl = document.getElementById('hostAvatar');
+                if (owner.avatarUrl) {
+                    avatarEl.innerHTML = `<img src="${owner.avatarUrl}" alt="${owner.firstName} ${owner.lastName}">`;
+                } else {
+                    avatarEl.textContent = initials || 'H';
+                }
+
+                document.getElementById('hostName').textContent = `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || 'Gospodarz';
+
+                const roleText = owner.role === 'ADMIN' ? 'Administrator' : 'Gospodarz';
+                document.getElementById('hostRole').textContent = roleText;
+
+                if (owner.createdAt) {
+                    const joinDate = new Date(owner.createdAt);
+                    const monthYear = joinDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+                    document.getElementById('hostSince').textContent = `Dołączył(a) ${monthYear}`;
+                }
+
+                const statsHtml = `
+                    <div class="host-stat">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Zweryfikowany gospodarz
+                    </div>
+                `;
+                document.getElementById('hostStats').innerHTML = statsHtml;
+            }
+
+            addOwnerAdminActions();
+        }
+
+        function addOwnerAdminActions() {
+            if (!api.user) return;
+
+            const isOwner = place.owner && api.user.id === place.owner.id;
+            const isAdmin = api.user.role === 'ADMIN';
+
+            if (!isOwner && !isAdmin) return;
+
+            const actionsContainer = document.querySelector('.hotel-actions');
+            if (!actionsContainer) return;
+
+            if (isOwner || isAdmin) {
+                const editBtn = document.createElement('a');
+                editBtn.href = `edit-place.html?id=${placeId}`;
+                editBtn.className = 'action-btn';
+                editBtn.title = 'Edytuj';
+                editBtn.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Edytuj
+                `;
+                actionsContainer.insertBefore(editBtn, actionsContainer.firstChild);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn';
+                deleteBtn.title = 'Usuń';
+                deleteBtn.style.color = '#dc3545';
+                deleteBtn.onclick = deletePlace;
+                deleteBtn.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Usuń
+                `;
+                actionsContainer.insertBefore(deleteBtn, actionsContainer.firstChild);
+            }
+        }
+
+        async function deletePlace() {
+            if (!confirm(`Czy na pewno chcesz usunąć "${place.name}"? Ta operacja jest nieodwracalna.`)) {
+                return;
+            }
+
+            try {
+                await api.request(`/places/${placeId}`, { method: 'DELETE' });
+                showToast('Miejsce zostało usunięte', 'success');
+                setTimeout(() => window.location.href = 'my-places.html', 1500);
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function deleteReview(reviewId) {
+            if (!confirm('Czy na pewno chcesz usunąć tę opinię?')) {
+                return;
+            }
+
+            try {
+                await api.request(`/reviews/${reviewId}`, { method: 'DELETE' });
+                showToast('Opinia została usunięta', 'success');
+                loadReviews();
+            } catch (error) {
+                showToast(error.message, 'error');
             }
         }
 
@@ -1096,17 +1275,24 @@
                 }
 
                 if (reviews && reviews.length > 0) {
+                    const isAdmin = api.user && api.user.role === 'ADMIN';
+
                     document.getElementById('reviewsList').innerHTML = reviews.map(review => `
                         <div class="review-item">
                             <div class="review-header">
-                                <div class="review-author">
-                                    <div class="review-author-avatar">${review.userInitials || 'U'}</div>
-                                    <div class="review-author-info">
-                                        <h5>${review.userName || 'Użytkownik'}</h5>
-                                        <p>${formatDate(review.createdAt)}</p>
+                                <div class="review-header-left">
+                                    <div class="review-author">
+                                        <div class="review-author-avatar">${review.userInitials || 'U'}</div>
+                                        <div class="review-author-info">
+                                            <h5>${review.userName || 'Użytkownik'}</h5>
+                                            <p>${formatDate(review.createdAt)}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="review-score">${review.rating.toFixed(1)}</div>
+                                <div class="review-header-right">
+                                    <div class="review-score">${review.rating.toFixed(1)}</div>
+                                    ${isAdmin ? `<button class="review-delete-btn" onclick="deleteReview(${review.id})">Usuń</button>` : ''}
+                                </div>
                             </div>
                             <p class="review-text">${review.comment || ''}</p>
                         </div>
@@ -1337,6 +1523,14 @@
                 'LOFT': 'Loft'
             };
             return types[type] || type;
+        }
+
+        function showToast(message, type = '') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
     </script>
 </body>

@@ -209,11 +209,16 @@ public class PlaceService {
     }
 
     @Transactional
-    public void deletePlace(Long placeId, User owner) {
+    public void deletePlace(Long placeId, User user) {
         Place place = findById(placeId);
-        if (!place.getOwner().getId().equals(owner.getId())) {
+
+        boolean isOwner = place.getOwner().getId().equals(user.getId());
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+
+        if (!isOwner && !isAdmin) {
             throw new RuntimeException("Brak uprawnień");
         }
+
         placeRepository.delete(place);
     }
 }

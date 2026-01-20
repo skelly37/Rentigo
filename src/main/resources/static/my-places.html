@@ -5,19 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rentigo - Moje miejsca</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f5f5;
-            min-height: 100vh;
-        }
-
         .header {
             background: #1a1a2e;
             display: flex;
@@ -92,6 +81,24 @@
             text-decoration: none;
         }
 
+        .login-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: white;
+            color: #333;
+        }
+
         .page-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -108,41 +115,6 @@
         .page-title {
             font-size: 32px;
             font-weight: 700;
-            color: #333;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: #e67e22;
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: #d35400;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-secondary:hover {
-            border-color: #ccc;
             color: #333;
         }
 
@@ -226,12 +198,7 @@
             color: #155724;
         }
 
-        .status-draft {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-paused {
+        .status-inactive {
             background: #e2e3e5;
             color: #383d41;
         }
@@ -322,6 +289,7 @@
             cursor: pointer;
             transition: all 0.2s;
             color: #666;
+            text-decoration: none;
         }
 
         .action-btn:hover {
@@ -332,34 +300,6 @@
         .action-btn svg {
             width: 18px;
             height: 18px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            font-size: 15px;
-            color: #666;
-            margin-bottom: 24px;
         }
 
         @media (max-width: 900px) {
@@ -417,7 +357,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
             </a>
-            <a href="profile.html" class="user-avatar">JK</a>
+            <a href="profile.html" class="user-avatar" style="display: none;"></a>
+            <a href="login.html" class="login-btn">Zaloguj się</a>
         </div>
     </header>
 
@@ -432,179 +373,155 @@
             </a>
         </div>
 
-        <div class="stats-row">
+        <div class="stats-row" id="statsRow">
             <div class="stat-card">
-                <div class="stat-value">2</div>
+                <div class="stat-value" id="statPlaces">-</div>
                 <div class="stat-label">Aktywne miejsca</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">18</div>
+                <div class="stat-value" id="statReservations">-</div>
                 <div class="stat-label">Rezerwacje w tym miesiącu</div>
             </div>
             <div class="stat-card highlight">
-                <div class="stat-value">12 450 zł</div>
+                <div class="stat-value" id="statRevenue">-</div>
                 <div class="stat-label">Przychód w tym miesiącu</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">4.9</div>
+                <div class="stat-value" id="statRating">-</div>
                 <div class="stat-label">Średnia ocena</div>
             </div>
         </div>
 
-        <div class="places-grid">
-            <!-- Place 1 - Active -->
-            <div class="place-card">
-                <div class="place-image">
-                    <img src="images/hotel-1.jpg" alt="Apartament Stare Miasto" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>hotel-1.jpg</span>';">
-                    <span class="place-status status-active">Aktywne</span>
-                </div>
-                <div class="place-content">
-                    <h3 class="place-name">Apartament Stare Miasto</h3>
-                    <div class="place-location">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        Kraków, Stare Miasto
-                    </div>
-                    <div class="place-stats">
-                        <div class="place-stat">
-                            <span class="place-stat-value">48</span>
-                            <span class="place-stat-label">Opinie</span>
-                        </div>
-                        <div class="place-stat">
-                            <span class="place-stat-value">9.2</span>
-                            <span class="place-stat-label">Ocena</span>
-                        </div>
-                        <div class="place-stat">
-                            <span class="place-stat-value">12</span>
-                            <span class="place-stat-label">Rezerwacje</span>
-                        </div>
-                    </div>
-                    <div class="place-footer">
-                        <div class="place-price">320 zł <span>/ noc</span></div>
-                        <div class="place-actions">
-                            <a href="hotel.html" class="action-btn" title="Zobacz">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </a>
-                            <a href="add-place.html" class="action-btn" title="Edytuj">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                            </a>
-                            <button class="action-btn" title="Wstrzymaj">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Place 2 - Active -->
-            <div class="place-card">
-                <div class="place-image">
-                    <img src="images/hotel-2.jpg" alt="Studio Kazimierz" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>hotel-2.jpg</span>';">
-                    <span class="place-status status-active">Aktywne</span>
-                </div>
-                <div class="place-content">
-                    <h3 class="place-name">Studio Kazimierz</h3>
-                    <div class="place-location">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        Kraków, Kazimierz
-                    </div>
-                    <div class="place-stats">
-                        <div class="place-stat">
-                            <span class="place-stat-value">32</span>
-                            <span class="place-stat-label">Opinie</span>
-                        </div>
-                        <div class="place-stat">
-                            <span class="place-stat-value">8.7</span>
-                            <span class="place-stat-label">Ocena</span>
-                        </div>
-                        <div class="place-stat">
-                            <span class="place-stat-value">6</span>
-                            <span class="place-stat-label">Rezerwacje</span>
-                        </div>
-                    </div>
-                    <div class="place-footer">
-                        <div class="place-price">189 zł <span>/ noc</span></div>
-                        <div class="place-actions">
-                            <a href="hotel.html" class="action-btn" title="Zobacz">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </a>
-                            <a href="add-place.html" class="action-btn" title="Edytuj">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                            </a>
-                            <button class="action-btn" title="Wstrzymaj">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Place 3 - Draft -->
-            <div class="place-card">
-                <div class="place-image">
-                    <span>Brak zdjęcia</span>
-                    <span class="place-status status-draft">Szkic</span>
-                </div>
-                <div class="place-content">
-                    <h3 class="place-name">Nowy apartament (szkic)</h3>
-                    <div class="place-location">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        Kraków
-                    </div>
-                    <div class="place-stats">
-                        <div class="place-stat">
-                            <span class="place-stat-value">-</span>
-                            <span class="place-stat-label">Opinie</span>
-                        </div>
-                        <div class="place-stat">
-                            <span class="place-stat-value">-</span>
-                            <span class="place-stat-label">Ocena</span>
-                        </div>
-                        <div class="place-stat">
-                            <span class="place-stat-value">-</span>
-                            <span class="place-stat-label">Rezerwacje</span>
-                        </div>
-                    </div>
-                    <div class="place-footer">
-                        <div class="place-price">- zł <span>/ noc</span></div>
-                        <div class="place-actions">
-                            <a href="add-place.html" class="action-btn" title="Dokończ">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                            </a>
-                            <button class="action-btn" title="Usuń">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <div class="places-grid" id="placesGrid">
+            <div class="loading-state" style="grid-column: 1 / -1;">
+                <div class="spinner"></div>
+                <p>Ładowanie miejsc...</p>
             </div>
         </div>
     </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let places = [];
+        let stats = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!api.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (api.user && api.user.role !== 'HOST' && api.user.role !== 'ADMIN') {
+                window.location.href = 'profile.html';
+                return;
+            }
+
+            updateAuthUI();
+            loadData();
+        });
+
+        async function loadData() {
+            try {
+                [places, stats] = await Promise.all([
+                    api.getMyPlaces(),
+                    api.getHostStats()
+                ]);
+                renderStats();
+                renderPlaces();
+            } catch (error) {
+                document.getElementById('placesGrid').innerHTML = `
+                    <div class="error-state" style="grid-column: 1 / -1;">
+                        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3>Wystąpił błąd</h3>
+                        <p>${error.message}</p>
+                        <button onclick="location.reload()" class="btn btn-primary">Spróbuj ponownie</button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderStats() {
+            if (stats) {
+                document.getElementById('statPlaces').textContent = stats.activePlaces || 0;
+                document.getElementById('statReservations').textContent = stats.monthlyReservations || 0;
+                document.getElementById('statRevenue').textContent = formatPrice(stats.monthlyRevenue || 0);
+                document.getElementById('statRating').textContent = stats.averageRating ? stats.averageRating.toFixed(1) : '-';
+            }
+        }
+
+        function renderPlaces() {
+            const container = document.getElementById('placesGrid');
+
+            if (!places || places.length === 0) {
+                showEmpty(container, 'Nie masz jeszcze żadnych miejsc', `
+                    <p style="margin-bottom: 20px;">Dodaj swoje pierwsze miejsce i zacznij zarabiać!</p>
+                    <a href="add-place.html" class="btn btn-primary">Dodaj miejsce</a>
+                `);
+                return;
+            }
+
+            container.innerHTML = places.map(place => {
+                const imageUrl = place.mainImage || (place.images && place.images[0]) || '';
+                const isActive = place.active !== false;
+
+                return `
+                    <div class="place-card">
+                        <div class="place-image">
+                            ${imageUrl ?
+                                `<img src="${imageUrl}" alt="${place.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>Brak zdjęcia</span>';">` :
+                                '<span>Brak zdjęcia</span>'
+                            }
+                            <span class="place-status ${isActive ? 'status-active' : 'status-inactive'}">${isActive ? 'Aktywne' : 'Nieaktywne'}</span>
+                        </div>
+                        <div class="place-content">
+                            <h3 class="place-name">${place.name}</h3>
+                            <div class="place-location">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                ${place.cityName || ''}${place.address ? ', ' + place.address : ''}
+                            </div>
+                            <div class="place-stats">
+                                <div class="place-stat">
+                                    <span class="place-stat-value">${place.reviewCount || 0}</span>
+                                    <span class="place-stat-label">Opinie</span>
+                                </div>
+                                <div class="place-stat">
+                                    <span class="place-stat-value">${place.averageRating ? place.averageRating.toFixed(1) : '-'}</span>
+                                    <span class="place-stat-label">Ocena</span>
+                                </div>
+                                <div class="place-stat">
+                                    <span class="place-stat-value">${place.reservationCount || 0}</span>
+                                    <span class="place-stat-label">Rezerwacje</span>
+                                </div>
+                            </div>
+                            <div class="place-footer">
+                                <div class="place-price">${formatPrice(place.pricePerNight)} <span>/ noc</span></div>
+                                <div class="place-actions">
+                                    <a href="hotel.html?id=${place.id}" class="action-btn" title="Zobacz">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showToast(message, type = '') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
 </body>
 </html>

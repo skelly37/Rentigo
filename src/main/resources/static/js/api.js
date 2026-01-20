@@ -46,6 +46,27 @@ const api = {
         const data = await response.json().catch(() => null);
 
         if (!response.ok) {
+            if (data?.data && typeof data.data === 'object') {
+                const fieldTranslations = {
+                    'name': 'Nazwa',
+                    'description': 'Opis',
+                    'cityId': 'Miasto',
+                    'address': 'Adres',
+                    'type': 'Typ',
+                    'pricePerNight': 'Cena za noc',
+                    'cleaningFee': 'Opłata za sprzątanie',
+                    'maxGuests': 'Maksymalna liczba gości',
+                    'bedrooms': 'Liczba sypialni',
+                    'bathrooms': 'Liczba łazienek'
+                };
+                const errors = Object.entries(data.data)
+                    .map(([field, message]) => {
+                        const fieldName = fieldTranslations[field] || field;
+                        return `${fieldName}: ${message}`;
+                    })
+                    .join('\n');
+                throw new Error(errors || data?.message || 'Wystąpił błąd');
+            }
             throw new Error(data?.message || 'Wystąpił błąd');
         }
 

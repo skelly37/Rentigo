@@ -390,8 +390,8 @@
 
                 <div class="form-group">
                     <label class="form-label">Opis <span class="required">*</span></label>
-                    <textarea class="form-textarea" id="description" placeholder="Opisz swoje miejsce - co je wyróżnia, jakie udogodnienia oferujesz, co znajduje się w okolicy..." required></textarea>
-                    <p class="form-hint">Minimum 100 znaków. Dobry opis zwiększa szanse na rezerwację.</p>
+                    <textarea class="form-textarea" id="description" placeholder="Opisz swoje miejsce - co je wyróżnia, jakie udogodnienia oferujesz, co znajduje się w okolicy..." required minlength="100"></textarea>
+                    <p class="form-hint" id="descriptionHint">Minimum 100 znaków. Dobry opis zwiększa szanse na rezerwację.</p>
                 </div>
             </div>
 
@@ -496,7 +496,26 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateAuthUI();
             checkAccess();
+            setupDescriptionCounter();
         });
+
+        function setupDescriptionCounter() {
+            const descriptionField = document.getElementById('description');
+            const hintElement = document.getElementById('descriptionHint');
+
+            if (descriptionField && hintElement) {
+                descriptionField.addEventListener('input', () => {
+                    const length = descriptionField.value.length;
+                    if (length < 100) {
+                        hintElement.textContent = `Wpisano ${length}/100 znaków. Minimum 100 znaków.`;
+                        hintElement.style.color = '#e74c3c';
+                    } else {
+                        hintElement.textContent = `Wpisano ${length} znaków. Dobry opis zwiększa szanse na rezerwację.`;
+                        hintElement.style.color = '#27ae60';
+                    }
+                });
+            }
+        }
 
         function checkAccess() {
             if (!api.isLoggedIn()) {

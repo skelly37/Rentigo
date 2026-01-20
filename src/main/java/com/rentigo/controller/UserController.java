@@ -45,4 +45,13 @@ public class UserController {
         userService.upgradeToHost(userPrincipal.getId());
         return ResponseEntity.ok(ApiResponse.success("Uzyskano status gospodarza"));
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Usuń użytkownika (tylko admin)")
+    public ResponseEntity<ApiResponse> deleteUser(
+            @PathVariable Long id,
+            @CurrentUser UserPrincipal userPrincipal) {
+        userService.deleteUser(id, userPrincipal.getUser());
+        return ResponseEntity.ok(ApiResponse.success("Użytkownik usunięty"));
+    }
 }

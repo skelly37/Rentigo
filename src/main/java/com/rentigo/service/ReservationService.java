@@ -72,6 +72,12 @@ public class ReservationService {
             .collect(Collectors.toList());
     }
 
+    public List<ReservationDto> getHostReservations(User host) {
+        return reservationRepository.findByPlaceOwner(host).stream()
+            .map(this::toDto)
+            .collect(Collectors.toList());
+    }
+
     public List<ReservationDto> getPlaceReservations(Long placeId, User owner) {
         Place place = placeService.findById(placeId);
         if (!place.getOwner().getId().equals(owner.getId())) {
@@ -193,5 +199,15 @@ public class ReservationService {
     public BigDecimal getMonthlyRevenue(User owner) {
         LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         return reservationRepository.sumRevenueByOwnerSince(owner, startOfMonth);
+    }
+
+    @Transactional
+    public void deleteReservation(Long reservationId, User user) {
+        if (!user.getRole().name().equals("ADMIN")) {
+            throw new RuntimeException("Brak uprawnień - tylko administrator może usuwać rezerwacje");
+        }
+
+        Reservation reservation = findById(reservationId);
+        reservationRepository.delete(reservation);
     }
 }

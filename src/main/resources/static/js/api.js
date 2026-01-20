@@ -162,6 +162,10 @@ const api = {
         return this.request('/reservations/cancelled');
     },
 
+    async getHostReservations() {
+        return this.request('/reservations/host');
+    },
+
     async createReservation(data) {
         return this.request('/reservations', {
             method: 'POST',

@@ -23,6 +23,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Optional<Reservation> findByReservationNumber(String reservationNumber);
 
+    boolean existsByUserAndPlaceAndStatus(User user, Place place, ReservationStatus status);
+
     @Query("SELECT r FROM Reservation r WHERE r.user = :user AND r.checkIn >= CURRENT_DATE AND r.status IN ('PENDING', 'CONFIRMED')")
     List<Reservation> findUpcomingReservations(@Param("user") User user);
 
@@ -43,4 +45,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT COALESCE(SUM(r.totalPrice), 0) FROM Reservation r WHERE r.place.owner = :owner AND r.createdAt >= :since AND r.status IN ('CONFIRMED', 'COMPLETED')")
     BigDecimal sumRevenueByOwnerSince(@Param("owner") User owner, @Param("since") java.time.LocalDateTime since);
+
+    @Query("SELECT r FROM Reservation r WHERE r.place.owner = :owner ORDER BY r.createdAt DESC")
+    List<Reservation> findByPlaceOwner(@Param("owner") User owner);
 }

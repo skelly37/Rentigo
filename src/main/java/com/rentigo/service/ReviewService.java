@@ -5,8 +5,10 @@ import com.rentigo.dto.ReviewSummaryDto;
 import com.rentigo.dto.request.CreateReviewRequest;
 import com.rentigo.entity.Place;
 import com.rentigo.entity.Review;
+import com.rentigo.entity.ReservationStatus;
 import com.rentigo.entity.User;
 import com.rentigo.repository.PlaceRepository;
+import com.rentigo.repository.ReservationRepository;
 import com.rentigo.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
+    private final ReservationRepository reservationRepository;
     private final PlaceService placeService;
     private final UserService userService;
 
@@ -69,6 +72,14 @@ public class ReviewService {
     public Review createReview(CreateReviewRequest request, User user) {
         Place place = placeService.findById(request.getPlaceId());
 
+        boolean hasCompletedReservation = reservationRepository.existsByUserAndPlaceAndStatus(
+            user, place, ReservationStatus.COMPLETED
+        );
+
+        if (!hasCompletedReservation) {
+            throw new RuntimeException("Możesz dodać opinię tylko po zakończonej rezerwacji");
+        }
+
         if (reviewRepository.existsByPlaceAndUser(place, user)) {
             throw new RuntimeException("Już dodałeś opinię dla tego miejsca");
         }
@@ -96,7 +107,10 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(() -> new RuntimeException("Opinia nie znaleziona"));
 
-        if (!review.getUser().getId().equals(user.getId())) {
+        boolean isOwner = review.getUser().getId().equals(user.getId());
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+
+        if (!isOwner && !isAdmin) {
             throw new RuntimeException("Brak uprawnień");
         }
 

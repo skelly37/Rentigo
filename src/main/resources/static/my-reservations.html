@@ -367,6 +367,7 @@
             <button class="tab active" data-tab="upcoming">Nadchodzące</button>
             <button class="tab" data-tab="past">Zakończone</button>
             <button class="tab" data-tab="cancelled">Anulowane</button>
+            <button class="tab" id="hostTab" data-tab="host" style="display: none;">Jako gospodarz</button>
         </div>
 
         <div class="reservations-list" id="reservationsList">
@@ -388,9 +389,16 @@
                 return;
             }
             updateAuthUI();
+            showHostTabIfNeeded();
             setupTabs();
             loadReservations();
         });
+
+        function showHostTabIfNeeded() {
+            if (api.user && (api.user.role === 'HOST' || api.user.role === 'ADMIN')) {
+                document.getElementById('hostTab').style.display = 'block';
+            }
+        }
 
         function setupTabs() {
             document.querySelectorAll('.tab').forEach(tab => {
@@ -417,6 +425,9 @@
                         break;
                     case 'cancelled':
                         reservations = await api.getCancelledReservations();
+                        break;
+                    case 'host':
+                        reservations = await api.getHostReservations();
                         break;
                 }
                 renderReservations();
@@ -501,11 +512,20 @@
                                 <span class="reservation-price">${formatPrice(reservation.totalPrice)}</span>
                                 <div class="reservation-actions">
                                     <a href="hotel.html?id=${place.id}" class="btn btn-secondary">Zobacz miejsce</a>
-                                    ${reservation.status === 'PENDING' || reservation.status === 'CONFIRMED' ?
-                                        `<button class="btn btn-danger" onclick="cancelReservation(${reservation.id})">Anuluj</button>` :
-                                        ''
+                                    ${currentTab === 'host' ?
+                                        (reservation.status === 'PENDING' ?
+                                            `<button class="btn btn-primary" onclick="confirmReservation(${reservation.id})">Zatwierdź</button>
+                                             <button class="btn btn-danger" onclick="cancelReservation(${reservation.id})">Odrzuć</button>` :
+                                            reservation.status === 'CONFIRMED' ?
+                                                `<button class="btn btn-danger" onclick="cancelReservation(${reservation.id})">Anuluj</button>` :
+                                                ''
+                                        ) :
+                                        (reservation.status === 'PENDING' || reservation.status === 'CONFIRMED' ?
+                                            `<button class="btn btn-danger" onclick="cancelReservation(${reservation.id})">Anuluj</button>` :
+                                            ''
+                                        )
                                     }
-                                    ${reservation.status === 'COMPLETED' && !reservation.hasReview ?
+                                    ${reservation.status === 'COMPLETED' && !reservation.hasReview && currentTab !== 'host' ?
                                         `<a href="hotel.html?id=${place.id}#reviews" class="btn btn-primary">Dodaj opinię</a>` :
                                         ''
                                     }
@@ -527,14 +547,31 @@
             }) + ', 15:00';
         }
 
+        async function confirmReservation(id) {
+            try {
+                await api.confirmReservation(id);
+                showToast('Rezerwacja została zatwierdzona', 'success');
+                loadReservations();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
         async function cancelReservation(id) {
-            if (!confirm('Czy na pewno chcesz anulować tę rezerwację?')) {
+            const message = currentTab === 'host' ?
+                'Czy na pewno chcesz odrzucić tę rezerwację?' :
+                'Czy na pewno chcesz anulować tę rezerwację?';
+
+            if (!confirm(message)) {
                 return;
             }
 
             try {
                 await api.cancelReservation(id);
-                showToast('Rezerwacja została anulowana', 'success');
+                const successMessage = currentTab === 'host' ?
+                    'Rezerwacja została odrzucona' :
+                    'Rezerwacja została anulowana';
+                showToast(successMessage, 'success');
                 loadReservations();
             } catch (error) {
                 showToast(error.message, 'error');

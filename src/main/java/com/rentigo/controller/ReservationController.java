@@ -48,6 +48,12 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getCancelledReservations(userPrincipal.getUser()));
     }
 
+    @GetMapping("/host")
+    @Operation(summary = "Pobierz rezerwacje moich miejsc (jako gospodarz)")
+    public ResponseEntity<List<ReservationDto>> getHostReservations(@CurrentUser UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(reservationService.getHostReservations(userPrincipal.getUser()));
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Pobierz szczegóły rezerwacji")
     public ResponseEntity<ReservationDto> getReservation(
@@ -86,5 +92,14 @@ public class ReservationController {
             @CurrentUser UserPrincipal userPrincipal) {
         Reservation reservation = reservationService.cancelReservation(id, userPrincipal.getUser());
         return ResponseEntity.ok(reservationService.toDto(reservation));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Usuń rezerwację (tylko admin)")
+    public ResponseEntity<ApiResponse> deleteReservation(
+            @PathVariable Long id,
+            @CurrentUser UserPrincipal userPrincipal) {
+        reservationService.deleteReservation(id, userPrincipal.getUser());
+        return ResponseEntity.ok(ApiResponse.success("Rezerwacja usunięta"));
     }
 }

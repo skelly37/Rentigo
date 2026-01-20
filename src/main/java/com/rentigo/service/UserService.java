@@ -102,4 +102,18 @@ public class UserService {
             userRepository.save(user);
         }
     }
+
+    @Transactional
+    public void deleteUser(Long userId, User currentUser) {
+        if (!currentUser.getRole().name().equals("ADMIN")) {
+            throw new RuntimeException("Brak uprawnień - tylko administrator może usuwać użytkowników");
+        }
+
+        if (currentUser.getId().equals(userId)) {
+            throw new RuntimeException("Nie możesz usunąć własnego konta");
+        }
+
+        User user = findById(userId);
+        userRepository.delete(user);
+    }
 }

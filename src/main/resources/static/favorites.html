@@ -156,7 +156,7 @@
         .hotel-image {
             width: 100%;
             height: 220px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -386,17 +386,13 @@
             countEl.textContent = `(${favorites.length} ${favorites.length === 1 ? 'miejsce' : (favorites.length < 5 ? 'miejsca' : 'miejsc')})`;
 
             container.innerHTML = favorites.map(place => {
-                const imageUrl = place.mainImage || (place.images && place.images[0]) || '';
+                const imageUrl = getImageUrl(place.mainImageUrl || (place.images && place.images[0]?.url));
                 const rating = place.averageRating || 0;
                 const ratingText = getRatingText(rating);
 
                 return `
                     <div class="hotel-card" data-place-id="${place.id}">
-                        <div class="hotel-image">
-                            ${imageUrl ?
-                                `<img src="${imageUrl}" alt="${place.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>Brak zdjęcia</span>';">` :
-                                '<span>Brak zdjęcia</span>'
-                            }
+                        <div class="hotel-image" style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;">
                             <button class="hotel-favorite" onclick="event.stopPropagation(); removeFavorite(${place.id})" title="Usuń z ulubionych">
                                 <svg fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>

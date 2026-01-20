@@ -1034,30 +1034,18 @@
 
             if (images.length === 0) {
                 gallery.innerHTML = `
-                    <div class="gallery-item">
-                        <span>${place.type || 'APARTMENT'}</span>
+                    <div class="gallery-item main">
+                        <img src="/images/placeholder.jpg" alt="Brak zdjęcia">
                     </div>
                 `;
                 return;
             }
 
-            let html = '';
-            for (let i = 0; i < Math.min(5, images.length); i++) {
-                html += `
-                    <div class="gallery-item">
-                        <img src="${images[i].url}" alt="${place.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>Zdjęcie ${i+1}</span>';">
-                        ${i === 4 && images.length > 5 ? `<div class="gallery-more">+${images.length - 5} zdjęć</div>` : ''}
-                    </div>
-                `;
-            }
-
-            if (images.length < 5) {
-                for (let i = images.length; i < 5; i++) {
-                    html += `<div class="gallery-item"><span>Zdjęcie ${i+1}</span></div>`;
-                }
-            }
-
-            gallery.innerHTML = html;
+            gallery.innerHTML = images.map((img, i) => `
+                <div class="gallery-item ${i === 0 ? 'main' : ''}">
+                    <img src="${img.url}" alt="Zdjęcie ${i+1}" loading="lazy">
+                </div>
+            `).join('');
         }
 
         function renderPlaceDetails() {

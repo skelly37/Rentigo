@@ -23,6 +23,7 @@ public class PlaceService {
     private final CityService cityService;
     private final AmenityService amenityService;
     private final UserService userService;
+    private final FileStorageService fileStorageService;
 
     public PlaceDto toDto(Place place) {
         return PlaceDto.builder()
@@ -93,6 +94,15 @@ public class PlaceService {
             .orElseThrow(() -> new RuntimeException("Miejsce nie znalezione"));
     }
 
+    public void checkOwnership(Place place, User user) {
+        boolean isOwner = place.getOwner().getId().equals(user.getId());
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Brak uprawnień");
+        }
+    }
+
     public Page<PlaceListDto> getActivePlaces(Pageable pageable, User currentUser) {
         return placeRepository.findByStatus(PlaceStatus.ACTIVE, pageable)
             .map(p -> toListDto(p, currentUser));
@@ -148,22 +158,7 @@ public class PlaceService {
             .amenities(amenities)
             .build();
 
-        place = placeRepository.save(place);
-
-        if (request.getImages() != null) {
-            for (int i = 0; i < request.getImages().size(); i++) {
-                PlaceImageRequest imgReq = request.getImages().get(i);
-                PlaceImage image = PlaceImage.builder()
-                    .place(place)
-                    .url(imgReq.getUrl())
-                    .isMain(imgReq.getIsMain() != null ? imgReq.getIsMain() : (i == 0))
-                    .displayOrder(imgReq.getDisplayOrder() != null ? imgReq.getDisplayOrder() : i)
-                    .build();
-                place.getImages().add(placeImageRepository.save(image));
-            }
-        }
-
-        return place;
+        return placeRepository.save(place);
     }
 
     @Transactional
@@ -218,6 +213,9 @@ public class PlaceService {
         if (!isOwner && !isAdmin) {
             throw new RuntimeException("Brak uprawnień");
         }
+
+        List<PlaceImage> images = placeImageRepository.findByPlace(place);
+        images.forEach(image -> fileStorageService.deleteFile(image.getUrl()));
 
         placeRepository.delete(place);
     }

@@ -89,6 +89,7 @@ public class DataSeeder implements CommandLineRunner {
             .firstName("Admin")
             .lastName("Rentigo")
             .phone("+48 111 111 111")
+            .avatarUrl("/images/placeholder.jpg")
             .role(Role.ADMIN)
             .build()));
 
@@ -98,6 +99,7 @@ public class DataSeeder implements CommandLineRunner {
             .firstName("Jan")
             .lastName("Kowalski")
             .phone("+48 222 222 222")
+            .avatarUrl("/images/placeholder.jpg")
             .role(Role.HOST)
             .build()));
 
@@ -107,6 +109,7 @@ public class DataSeeder implements CommandLineRunner {
             .firstName("Anna")
             .lastName("Nowak")
             .phone("+48 333 333 333")
+            .avatarUrl("/images/placeholder.jpg")
             .role(Role.HOST)
             .build()));
 
@@ -116,6 +119,7 @@ public class DataSeeder implements CommandLineRunner {
             .firstName("Piotr")
             .lastName("Wiśniewski")
             .phone("+48 444 444 444")
+            .avatarUrl("/images/placeholder.jpg")
             .role(Role.USER)
             .build()));
 
@@ -125,6 +129,7 @@ public class DataSeeder implements CommandLineRunner {
             .firstName("Maria")
             .lastName("Dąbrowska")
             .phone("+48 555 555 555")
+            .avatarUrl("/images/placeholder.jpg")
             .role(Role.USER)
             .build()));
 
@@ -197,21 +202,11 @@ public class DataSeeder implements CommandLineRunner {
 
             PlaceImage mainImage = PlaceImage.builder()
                 .place(place)
-                .url("https://images.unsplash.com/photo-156805" + (1000 + i) + "?w=800&q=80")
+                .url("/images/placeholder.jpg")
                 .isMain(true)
                 .displayOrder(0)
                 .build();
             placeImageRepository.save(mainImage);
-
-            for (int j = 1; j <= 3; j++) {
-                PlaceImage image = PlaceImage.builder()
-                    .place(place)
-                    .url("https://images.unsplash.com/photo-156805" + (2000 + i * 10 + j) + "?w=800&q=80")
-                    .isMain(false)
-                    .displayOrder(j)
-                    .build();
-                placeImageRepository.save(image);
-            }
 
             places.add(place);
         }

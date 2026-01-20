@@ -468,16 +468,12 @@
             }
 
             container.innerHTML = places.map(place => {
-                const imageUrl = place.mainImage || (place.images && place.images[0]) || '';
+                const imageUrl = getImageUrl(place.mainImageUrl || (place.images && place.images[0]?.url));
                 const isActive = place.active !== false;
 
                 return `
                     <div class="place-card">
-                        <div class="place-image">
-                            ${imageUrl ?
-                                `<img src="${imageUrl}" alt="${place.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>Brak zdjęcia</span>';">` :
-                                '<span>Brak zdjęcia</span>'
-                            }
+                        <div class="place-image" style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;">
                             <span class="place-status ${isActive ? 'status-active' : 'status-inactive'}">${isActive ? 'Aktywne' : 'Nieaktywne'}</span>
                         </div>
                         <div class="place-content">

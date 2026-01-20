@@ -225,8 +225,78 @@ const api = {
 
     async getHostStats() {
         return this.request('/host/stats');
+    },
+
+    async uploadPlaceImage(placeId, formData, isMain = false) {
+        const headers = {};
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const response = await fetch(`${API_BASE}/files/places/${placeId}/images?isMain=${isMain}`, {
+            method: 'POST',
+            headers,
+            body: formData
+        });
+
+        if (response.status === 401) {
+            this.clearAuth();
+            window.location.href = '/login.html';
+            throw new Error('Sesja wygasła');
+        }
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'Nie udało się przesłać zdjęcia');
+        }
+
+        return data;
+    },
+
+    async deletePlaceImage(imageId) {
+        return this.request(`/files/places/images/${imageId}`, { method: 'DELETE' });
+    },
+
+    async setMainPlaceImage(imageId) {
+        return this.request(`/files/places/images/${imageId}/set-main`, { method: 'PATCH' });
+    },
+
+    async uploadAvatar(formData) {
+        const headers = {};
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const response = await fetch(`${API_BASE}/files/avatar`, {
+            method: 'POST',
+            headers,
+            body: formData
+        });
+
+        if (response.status === 401) {
+            this.clearAuth();
+            window.location.href = '/login.html';
+            throw new Error('Sesja wygasła');
+        }
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'Nie udało się przesłać awatara');
+        }
+
+        return data;
+    },
+
+    async deleteAvatar() {
+        return this.request('/files/avatar', { method: 'DELETE' });
     }
 };
+
+function getImageUrl(imageUrl) {
+    return imageUrl || '/images/placeholder.jpg';
+}
 
 function updateAuthUI() {
     const userAvatar = document.querySelector('.user-avatar');
@@ -234,7 +304,11 @@ function updateAuthUI() {
 
     if (api.isLoggedIn() && api.user) {
         if (userAvatar) {
-            userAvatar.textContent = api.user.initials || api.user.firstName?.charAt(0) + api.user.lastName?.charAt(0);
+            if (api.user.avatarUrl) {
+                userAvatar.innerHTML = `<img src="${api.user.avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            } else {
+                userAvatar.textContent = api.user.initials || api.user.firstName?.charAt(0) + api.user.lastName?.charAt(0);
+            }
             userAvatar.href = 'profile.html';
             userAvatar.style.display = 'flex';
         }

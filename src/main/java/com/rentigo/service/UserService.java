@@ -95,6 +95,13 @@ public class UserService {
     }
 
     @Transactional
+    public void updateAvatar(Long userId, String avatarUrl) {
+        User user = findById(userId);
+        user.setAvatarUrl(avatarUrl);
+        userRepository.save(user);
+    }
+
+    @Transactional
     public void upgradeToHost(Long userId) {
         User user = findById(userId);
         if (user.getRole() == Role.USER) {

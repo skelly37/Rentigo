@@ -276,7 +276,7 @@
         .hotel-image {
             width: 100%;
             height: 220px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -851,11 +851,7 @@
 
             grid.innerHTML = places.map(place => `
                 <a href="hotel.html?id=${place.id}" class="hotel-card">
-                    <div class="hotel-image">
-                        ${place.mainImage ?
-                            `<img src="${place.mainImage}" alt="${place.name}" onerror="this.style.display='none';">` :
-                            `<span>${place.type || 'APARTMENT'}</span>`
-                        }
+                    <div class="hotel-image" style="background-image: url('${getImageUrl(place.mainImageUrl)}'); background-size: cover; background-position: center;">
                         ${place.reviewCount > 10 ? '<span class="hotel-badge">Popularny</span>' : ''}
                         <button class="hotel-favorite ${favorites.has(place.id) ? 'active' : ''}"
                                 onclick="toggleFavorite(event, ${place.id})"

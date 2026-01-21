@@ -25,6 +25,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     boolean existsByUserAndPlaceAndStatus(User user, Place place, ReservationStatus status);
 
+    boolean existsByUserAndPlaceAndStatusIn(User user, Place place, List<ReservationStatus> statuses);
+
     @Query("SELECT r FROM Reservation r WHERE r.user = :user AND r.checkIn >= CURRENT_DATE AND r.status IN ('PENDING', 'CONFIRMED')")
     List<Reservation> findUpcomingReservations(@Param("user") User user);
 

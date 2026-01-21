@@ -23,4 +23,5 @@ public class PlaceListDto {
     private PlaceStatus status;
     private String mainImageUrl;
     private Boolean isFavorite;
+    private Long ownerId;
 }

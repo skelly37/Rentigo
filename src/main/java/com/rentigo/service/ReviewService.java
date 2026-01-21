@@ -72,12 +72,12 @@ public class ReviewService {
     public Review createReview(CreateReviewRequest request, User user) {
         Place place = placeService.findById(request.getPlaceId());
 
-        boolean hasCompletedReservation = reservationRepository.existsByUserAndPlaceAndStatus(
-            user, place, ReservationStatus.COMPLETED
+        boolean hasFinishedReservation = reservationRepository.existsByUserAndPlaceAndStatusIn(
+            user, place, List.of(ReservationStatus.COMPLETED, ReservationStatus.CANCELLED)
         );
 
-        if (!hasCompletedReservation) {
-            throw new RuntimeException("Możesz dodać opinię tylko po zakończonej rezerwacji");
+        if (!hasFinishedReservation) {
+            throw new RuntimeException("Możesz dodać opinię tylko po zakończonej lub anulowanej rezerwacji");
         }
 
         if (reviewRepository.existsByPlaceAndUser(place, user)) {

@@ -511,6 +511,7 @@
                             <div class="reservation-footer">
                                 <span class="reservation-price">${formatPrice(reservation.totalPrice)}</span>
                                 <div class="reservation-actions">
+                                    <a href="reservation-details.html?id=${reservation.id}" class="btn btn-primary">Szczegóły rezerwacji</a>
                                     <a href="hotel.html?id=${place.id}" class="btn btn-secondary">Zobacz miejsce</a>
                                     ${currentTab === 'host' ?
                                         (reservation.status === 'PENDING' ?
@@ -524,10 +525,6 @@
                                             `<button class="btn btn-danger" onclick="cancelReservation(${reservation.id})">Anuluj</button>` :
                                             ''
                                         )
-                                    }
-                                    ${reservation.status === 'COMPLETED' && !reservation.hasReview && currentTab !== 'host' ?
-                                        `<a href="hotel.html?id=${place.id}#reviews" class="btn btn-primary">Dodaj opinię</a>` :
-                                        ''
                                     }
                                 </div>
                             </div>

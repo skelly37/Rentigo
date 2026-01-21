@@ -535,55 +535,6 @@
             line-height: 1.6;
         }
 
-        .add-review-form {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #eee;
-        }
-
-        .add-review-form h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 16px;
-        }
-
-        .rating-select {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .rating-star {
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-
-        .rating-star.active,
-        .rating-star:hover {
-            color: #e67e22;
-        }
-
-        .review-textarea {
-            width: 100%;
-            padding: 14px 16px;
-            font-size: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            outline: none;
-            font-family: inherit;
-            min-height: 100px;
-            resize: vertical;
-            margin-bottom: 12px;
-        }
-
-        .review-textarea:focus {
-            border-color: #e67e22;
-        }
-
         .booking-card {
             background: white;
             border-radius: 16px;
@@ -752,19 +703,6 @@
             color: #666;
         }
 
-        .login-prompt {
-            text-align: center;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            margin-top: 24px;
-        }
-
-        .login-prompt a {
-            color: #e67e22;
-            font-weight: 600;
-        }
-
         @media (max-width: 1000px) {
             .page-container {
                 grid-template-columns: 1fr;
@@ -923,8 +861,6 @@
                     <div class="reviews-summary" id="reviewsSummary" style="display: none;"></div>
 
                     <div class="reviews-list" id="reviewsList"></div>
-
-                    <div id="addReviewSection"></div>
                 </div>
             </div>
 
@@ -982,7 +918,6 @@
         let place = null;
         let placeId = null;
         let isFavorite = false;
-        let selectedRating = 5;
 
         document.addEventListener('DOMContentLoaded', async () => {
             updateAuthUI();
@@ -1296,74 +1231,8 @@
                         </div>
                     `;
                 }
-
-                renderAddReviewForm();
             } catch (error) {
                 console.error('Error loading reviews:', error);
-            }
-        }
-
-        function renderAddReviewForm() {
-            const section = document.getElementById('addReviewSection');
-
-            if (!api.isLoggedIn()) {
-                section.innerHTML = `
-                    <div class="login-prompt">
-                        <p><a href="login.html">Zaloguj się</a>, aby dodać opinię</p>
-                    </div>
-                `;
-                return;
-            }
-
-            section.innerHTML = `
-                <div class="add-review-form">
-                    <h4>Dodaj swoją opinię</h4>
-                    <div class="rating-select" id="ratingStars">
-                        ${[1,2,3,4,5,6,7,8,9,10].map(i => `
-                            <svg class="rating-star ${i <= selectedRating ? 'active' : ''}"
-                                 onclick="setRating(${i})"
-                                 fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                        `).join('')}
-                    </div>
-                    <textarea class="review-textarea" id="reviewComment" placeholder="Podziel się swoimi wrażeniami z pobytu..."></textarea>
-                    <button class="btn btn-primary" onclick="submitReview()">Dodaj opinię</button>
-                </div>
-            `;
-        }
-
-        function setRating(rating) {
-            selectedRating = rating;
-            const stars = document.querySelectorAll('#ratingStars .rating-star');
-            stars.forEach((star, index) => {
-                star.classList.toggle('active', index < rating);
-            });
-        }
-
-        async function submitReview() {
-            const comment = document.getElementById('reviewComment').value.trim();
-
-            if (!comment) {
-                alert('Proszę dodać komentarz');
-                return;
-            }
-
-            try {
-                await api.createReview({
-                    placeId: parseInt(placeId),
-                    rating: selectedRating,
-                    cleanlinessRating: selectedRating,
-                    locationRating: selectedRating,
-                    valueRating: selectedRating,
-                    communicationRating: selectedRating,
-                    comment: comment
-                });
-
-                await loadReviews();
-                await loadPlace();
-            } catch (error) {
-                alert(error.message);
             }
         }
 

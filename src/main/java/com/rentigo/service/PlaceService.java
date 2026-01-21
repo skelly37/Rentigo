@@ -77,6 +77,7 @@ public class PlaceService {
             .status(place.getStatus())
             .mainImageUrl(place.getMainImageUrl())
             .isFavorite(isFavorite)
+            .ownerId(place.getOwner() != null ? place.getOwner().getId() : null)
             .build();
     }
 

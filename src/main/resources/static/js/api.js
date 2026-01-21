@@ -291,6 +291,21 @@ const api = {
 
     async deleteAvatar() {
         return this.request('/files/avatar', { method: 'DELETE' });
+    },
+
+    async getReservation(id) {
+        return this.request(`/reservations/${id}`);
+    },
+
+    async getReservationMessages(reservationId) {
+        return this.request(`/messages/reservation/${reservationId}`);
+    },
+
+    async sendMessage(data) {
+        return this.request('/messages', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
     }
 };
 

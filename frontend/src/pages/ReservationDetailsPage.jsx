@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import api from '../services/api'
+import { useAuth } from '../hooks/useAuth'
 
 export default function ReservationDetailsPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -117,7 +119,8 @@ export default function ReservationDetailsPage() {
   }
 
   const canReview = (reservation) => {
-    return (reservation.status === 'COMPLETED' || reservation.status === 'CANCELLED') && !reservation.hasReview
+    const isGuest = reservation.user?.id === user?.id
+    return isGuest && (reservation.status === 'COMPLETED' || reservation.status === 'CANCELLED') && !reservation.hasReview
   }
 
   if (loading) {

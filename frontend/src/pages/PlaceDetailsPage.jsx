@@ -185,7 +185,7 @@ export default function PlaceDetailsPage() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gridTemplateColumns: '2fr 1fr',
           gap: '40px'
         }}>
           <div>
@@ -199,6 +199,22 @@ export default function PlaceDetailsPage() {
                 <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '12px' }}>
                   {place.name}
                 </h1>
+                {reviewSummary && reviewSummary.reviewCount > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '8px',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    <span>{Number(reviewSummary.averageRating).toFixed(1)}</span>
+                    <span style={{ color: '#e67e22' }}>★</span>
+                    <span style={{ color: '#666', fontWeight: '400' }}>
+                      / {reviewSummary.reviewCount} {reviewSummary.reviewCount === 1 ? 'opinia' : 'opinii'}
+                    </span>
+                  </div>
+                )}
                 <p style={{ color: '#666', fontSize: '16px' }}>
                   {place.city?.name} • {getPlaceType(place.type)} • {place.maxGuests} gości
                 </p>
@@ -213,32 +229,6 @@ export default function PlaceDetailsPage() {
               </button>
             </div>
 
-            {reviewSummary && reviewSummary.totalReviews > 0 && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                padding: '16px',
-                background: '#f8f9fa',
-                borderRadius: '12px',
-                marginBottom: '24px'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '18px',
-                  fontWeight: '600'
-                }}>
-                  <span style={{ color: '#e67e22' }}>★</span>
-                  <span>{reviewSummary.averageRating.toFixed(1)}</span>
-                </div>
-                <span style={{ color: '#666' }}>•</span>
-                <span style={{ color: '#666' }}>
-                  {reviewSummary.totalReviews} {reviewSummary.totalReviews === 1 ? 'opinia' : 'opinii'}
-                </span>
-              </div>
-            )}
 
             <div style={{
               borderTop: '1px solid #e0e0e0',

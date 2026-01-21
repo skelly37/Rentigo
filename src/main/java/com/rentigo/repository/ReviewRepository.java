@@ -42,4 +42,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT COUNT(r) FROM Review r WHERE r.place = :place")
     long countByPlace(@Param("place") Place place);
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.place.owner = :owner")
+    BigDecimal calculateAverageRatingForOwner(@Param("owner") User owner);
 }

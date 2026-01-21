@@ -167,10 +167,10 @@ export default function MyPlacesPage() {
                   boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                 }}>
                   <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
-                    Łączne miejsca
+                    Aktywne miejsca
                   </p>
                   <p style={{ fontSize: '32px', fontWeight: '700', color: '#e67e22' }}>
-                    {stats.totalPlaces || 0}
+                    {stats.activePlaces || 0}
                   </p>
                 </div>
 
@@ -181,10 +181,10 @@ export default function MyPlacesPage() {
                   boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                 }}>
                   <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
-                    Łączne rezerwacje
+                    Rezerwacje (ten miesiąc)
                   </p>
                   <p style={{ fontSize: '32px', fontWeight: '700', color: '#28a745' }}>
-                    {stats.totalReservations || 0}
+                    {stats.monthlyReservations || 0}
                   </p>
                 </div>
 
@@ -195,10 +195,10 @@ export default function MyPlacesPage() {
                   boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                 }}>
                   <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
-                    Oczekujące
+                    Średnia ocena
                   </p>
                   <p style={{ fontSize: '32px', fontWeight: '700', color: '#ffc107' }}>
-                    {stats.pendingReservations || 0}
+                    {stats.averageRating ? Number(stats.averageRating).toFixed(1) : '—'}
                   </p>
                 </div>
 
@@ -209,10 +209,10 @@ export default function MyPlacesPage() {
                   boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
                 }}>
                   <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
-                    Łączny dochód
+                    Dochód (ten miesiąc)
                   </p>
                   <p style={{ fontSize: '32px', fontWeight: '700', color: '#007bff' }}>
-                    {stats.totalRevenue || 0} zł
+                    {stats.monthlyRevenue ? Number(stats.monthlyRevenue).toFixed(0) : 0} zł
                   </p>
                 </div>
               </div>

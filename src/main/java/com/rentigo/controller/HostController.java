@@ -30,6 +30,7 @@ public class HostController {
     private final PlaceService placeService;
     private final ReservationService reservationService;
     private final PlaceRepository placeRepository;
+    private final ReviewRepository reviewRepository;
 
     @GetMapping("/places")
     @Operation(summary = "Pobierz moje miejsca")
@@ -51,11 +52,13 @@ public class HostController {
         long activePlaces = placeRepository.countByOwnerAndStatus(userPrincipal.getUser(), PlaceStatus.ACTIVE);
         long monthlyReservations = reservationService.countMonthlyReservations(userPrincipal.getUser());
         BigDecimal monthlyRevenue = reservationService.getMonthlyRevenue(userPrincipal.getUser());
+        BigDecimal averageRating = reviewRepository.calculateAverageRatingForOwner(userPrincipal.getUser());
 
         return ResponseEntity.ok(HostStatsDto.builder()
             .activePlaces(activePlaces)
             .monthlyReservations(monthlyReservations)
             .monthlyRevenue(monthlyRevenue != null ? monthlyRevenue : BigDecimal.ZERO)
+            .averageRating(averageRating)
             .build());
     }
 }

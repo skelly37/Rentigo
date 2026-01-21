@@ -312,73 +312,60 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 
 ### Wymagania
 
-- Java 11+
+- Java 17+
 - Maven 3.8+
-- PostgreSQL 15+
-- RabbitMQ 3.x (opcjonalnie)
-- Node.js 18+ (dla developmentu frontendu)
-- npm 9+ (dla developmentu frontendu)
+- Docker & Docker Compose (dla PostgreSQL i RabbitMQ)
+- Node.js 18+ (opcjonalnie, dla developmentu frontendu)
+- npm 9+ (opcjonalnie, dla developmentu frontendu)
 
-### Krok 1: Konfiguracja bazy danych
+### Automatyczne uruchomienie (zalecane)
 
-```sql
--- Utwórz bazę danych
-CREATE DATABASE rentigo;
+Aplikacja automatycznie:
+- ✅ Uruchamia PostgreSQL i RabbitMQ w Dockerze
+- ✅ Tworzy bazę danych `rentigo`
+- ✅ Tworzy wszystkie tabele (Hibernate auto-ddl)
+- ✅ Wczytuje dane testowe (DataLoader)
+- ✅ Buduje i uruchamia aplikację
 
--- Utwórz użytkownika (opcjonalnie)
-CREATE USER rentigo_user WITH PASSWORD 'rentigo_password';
-GRANT ALL PRIVILEGES ON DATABASE rentigo TO rentigo_user;
-```
+### Krok 1: Uruchomienie aplikacji
 
-### Krok 2: Konfiguracja aplikacji
+#### Opcja A: Uruchomienie pełnej aplikacji (zalecane)
 
-Edytuj `src/main/resources/application.properties`:
-
-```properties
-# Dostosuj dane dostępowe do bazy danych
-spring.datasource.url=jdbc:postgresql://localhost:5432/rentigo
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-
-# Opcjonalnie: RabbitMQ
-spring.rabbitmq.host=localhost
-spring.rabbitmq.port=5672
-spring.rabbitmq.username=guest
-spring.rabbitmq.password=guest
-```
-
-### Krok 3: Uruchomienie aplikacji
-
-#### Opcja A: Uruchomienie pełnej aplikacji (zalecane dla produkcji)
-
+**Pierwsze uruchomienie (fresh start):**
 ```bash
-# Zbuduj projekt (frontend + backend)
-mvn clean install
+./start-fresh.sh
+```
 
-# Uruchom aplikację
-mvn spring-boot:run
+**Kolejne uruchomienia (restart):**
+```bash
+./restart.sh
+```
+
+**Zatrzymanie:**
+```bash
+./stop.sh
 ```
 
 Aplikacja będzie dostępna pod adresem: http://localhost:8080
 
-#### Opcja B: Development mode z Hot Reload (zalecane dla developmentu)
+#### Opcja B: Development mode z Hot Reload (dla developmentu frontendu)
 
-**Terminal 1 - Backend:**
+**Terminal 1 - Uruchom backend i usługi:**
 ```bash
-mvn spring-boot:run
+./restart.sh
 ```
 
-**Terminal 2 - Frontend:**
+**Terminal 2 - Frontend dev server:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Frontend dev server: http://localhost:3000 (proxy do backendu na :8080)
+Frontend dev server: http://localhost:3000 (z Hot Module Replacement)
 Backend API: http://localhost:8080
 
-### Krok 4: Dostęp do dokumentacji API
+### Krok 2: Dostęp do aplikacji
 
 - Swagger UI: http://localhost:8080/swagger-ui.html
 - OpenAPI JSON: http://localhost:8080/api-docs
@@ -388,10 +375,12 @@ Backend API: http://localhost:8080
 | Email | Hasło | Rola |
 |-------|-------|------|
 | admin@rentigo.pl | admin123 | ADMIN |
-| jan.kowalski@email.com | password123 | HOST |
-| anna.nowak@email.com | password123 | HOST |
-| piotr.wisniewski@email.com | password123 | USER |
-| maria.dabrowska@email.com | password123 | USER |
+| jan.kowalski@example.com | password123 | HOST |
+| anna.nowak@example.com | password123 | HOST |
+| katarzyna.dabrowska@example.com | password123 | HOST |
+| piotr.wisniewski@example.com | password123 | USER |
+| maria.zielinska@example.com | password123 | USER |
+| tomasz.lewandowski@example.com | password123 | USER |
 
 ## Dokumentacja API
 
@@ -462,71 +451,6 @@ Backend API: http://localhost:8080
 | GET | `/api/cities` | Lista miast | ❌ |
 | GET | `/api/amenities` | Lista udogodnień | ❌ |
 | POST | `/api/contact` | Wyślij wiadomość | ❌ |
-
-## Struktura projektu
-
-```
-rentigo/
-├── frontend/                     # Frontend React
-│   ├── src/
-│   │   ├── assets/              # Zasoby statyczne
-│   │   │   └── css/
-│   │   ├── components/          # Komponenty React
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   └── Layout.jsx
-│   │   ├── context/             # React Context (AuthContext)
-│   │   ├── hooks/               # Custom hooks
-│   │   ├── pages/               # Strony aplikacji
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── SearchPage.jsx
-│   │   │   ├── PlaceDetailsPage.jsx
-│   │   │   └── ...
-│   │   ├── services/            # API client
-│   │   │   └── api.js
-│   │   ├── App.jsx              # Root component
-│   │   └── main.jsx             # Entry point
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-├── src/
-│   ├── main/
-│   │   ├── java/com/rentigo/
-│   │   │   ├── config/           # Konfiguracja Spring
-│   │   │   │   ├── DataLoader.java
-│   │   │   │   ├── GlobalExceptionHandler.java
-│   │   │   │   ├── OpenApiConfig.java
-│   │   │   │   ├── RabbitMQConfig.java
-│   │   │   │   └── SecurityConfig.java
-│   │   │   ├── controller/       # REST Controllers
-│   │   │   │   ├── AuthController.java
-│   │   │   │   ├── PlaceController.java
-│   │   │   │   ├── ReservationController.java
-│   │   │   │   └── ...
-│   │   │   ├── dto/              # Data Transfer Objects
-│   │   │   │   ├── request/
-│   │   │   │   └── response/
-│   │   │   ├── entity/           # JPA Entities
-│   │   │   │   ├── User.java
-│   │   │   │   ├── Place.java
-│   │   │   │   └── ...
-│   │   │   ├── repository/       # Spring Data Repositories
-│   │   │   ├── security/         # JWT Security
-│   │   │   │   ├── JwtTokenProvider.java
-│   │   │   │   ├── JwtAuthenticationFilter.java
-│   │   │   │   └── ...
-│   │   │   └── service/          # Business Logic
-│   │   │       ├── UserService.java
-│   │   │       ├── PlaceService.java
-│   │   │       └── ...
-│   │   └── resources/
-│   │       ├── static/           # Zbudowany frontend (generowany)
-│   │       └── application.properties
-│   └── test/                     # Testy
-├── pom.xml
-└── README.md
-```
 
 ## Licencja
 

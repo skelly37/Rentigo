@@ -192,7 +192,7 @@ export default function ReservationDetailsPage() {
           marginBottom: '30px'
         }}>
           <img
-            src={reservation.place?.images?.[0]?.url || '/placeholder.jpg'}
+            src={reservation.place?.mainImageUrl || '/placeholder.jpg'}
             alt={reservation.place?.name}
             style={{
               width: '100%',

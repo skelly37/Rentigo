@@ -288,12 +288,30 @@ export default function ReservationDetailsPage() {
             </div>
 
             {canCancelReservation(reservation) && (
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <button
+                  onClick={handleCancelReservation}
+                  className="btn btn-danger"
+                  style={{ flex: '1' }}
+                >
+                  Anuluj rezerwację
+                </button>
+                <button
+                  onClick={() => navigate(`/place/${reservation.place?.id}`)}
+                  className="btn btn-secondary"
+                  style={{ flex: '1' }}
+                >
+                  Zobacz hotel
+                </button>
+              </div>
+            )}
+            {!canCancelReservation(reservation) && (
               <button
-                onClick={handleCancelReservation}
-                className="btn btn-danger"
+                onClick={() => navigate(`/place/${reservation.place?.id}`)}
+                className="btn btn-secondary"
                 style={{ width: '100%', marginTop: '24px' }}
               >
-                Anuluj rezerwację
+                Zobacz hotel
               </button>
             )}
           </div>

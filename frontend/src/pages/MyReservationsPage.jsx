@@ -265,6 +265,12 @@ export default function MyReservationsPage() {
 
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button
+                          onClick={() => navigate(`/place/${reservation.place?.id}`)}
+                          className="btn btn-secondary btn-small"
+                        >
+                          Zobacz
+                        </button>
+                        <button
                           onClick={() => navigate(`/reservation/${reservation.id}`)}
                           className="btn btn-primary btn-small"
                           style={{ flex: '1' }}

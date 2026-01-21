@@ -82,20 +82,6 @@ export default function HomePage() {
             flexWrap: 'wrap',
             boxShadow: '0 8px 30px rgba(0,0,0,0.2)'
           }}>
-            <div className="form-group" style={{ flex: '1', minWidth: '200px', marginBottom: '0' }}>
-              <label style={{ color: '#333' }}>Miasto</label>
-              <select
-                value={searchForm.cityId}
-                onChange={(e) => setSearchForm({ ...searchForm, cityId: e.target.value })}
-                required
-              >
-                <option value="">Wybierz miasto</option>
-                {cities.map(city => (
-                  <option key={city.id} value={city.id}>{city.name}</option>
-                ))}
-              </select>
-            </div>
-
             <div className="form-group" style={{ flex: '0 0 150px', marginBottom: '0' }}>
               <label style={{ color: '#333' }}>Liczba gości</label>
               <input
@@ -127,6 +113,20 @@ export default function HomePage() {
                 min={searchForm.checkIn || new Date().toISOString().split('T')[0]}
                 required
               />
+            </div>
+
+            <div className="form-group" style={{ flex: '1', minWidth: '200px', marginBottom: '0' }}>
+              <label style={{ color: '#333' }}>Miasto</label>
+              <select
+                value={searchForm.cityId}
+                onChange={(e) => setSearchForm({ ...searchForm, cityId: e.target.value })}
+                required
+              >
+                <option value="">Wybierz miasto</option>
+                {cities.map(city => (
+                  <option key={city.id} value={city.id}>{city.name}</option>
+                ))}
+              </select>
             </div>
 
             <button type="submit" className="btn btn-primary" style={{
@@ -177,11 +177,6 @@ export default function HomePage() {
                   onClick={() => handleCityClick(city.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <img
-                    src="/placeholder.jpg"
-                    alt={city.name}
-                    className="card-image"
-                  />
                   <div className="card-body">
                     <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
                       {city.name}

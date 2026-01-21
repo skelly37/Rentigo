@@ -30,3 +30,6 @@ target
 frontend/node_modules
 frontend/dist
 frontend/.vite
+uploads
+src/main/resources/static
+logs

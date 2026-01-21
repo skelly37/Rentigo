@@ -168,7 +168,7 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 │      users        │       │      places       │       │      cities       │
 ├───────────────────┤       ├───────────────────┤       ├───────────────────┤
 │ PK id             │       │ PK id             │       │ PK id             │
-│    email (unique) │       │ FK host_id ───────┼───────│    name           │
+│    email (unique) │       │ FK owner_id ──────┼───────│    name           │
 │    password       │       │ FK city_id ───────┼───────│    country        │
 │    first_name     │       │    name           │       │    created_at     │
 │    last_name      │       │    description    │       └───────────────────┘
@@ -286,15 +286,19 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 | Wyszukiwanie miejsc | ✅ | Po mieście, liczbie gości |
 | Przeglądanie ofert | ✅ | Lista wszystkich miejsc |
 | Szczegóły miejsca | ✅ | Pełne informacje, zdjęcia, recenzje |
-| Rezerwacja | ✅ | Tworzenie rezerwacji z walidacją dat |
-| Moje rezerwacje | ✅ | Lista rezerwacji użytkownika |
-| Anulowanie rezerwacji | ✅ | Możliwość anulowania |
-| Recenzje | ✅ | Dodawanie ocen miejsc |
+| Rezerwacja | ✅ | Tworzenie rezerwacji z walidacją dat i dynamiczną ceną |
+| Moje rezerwacje | ✅ | Lista rezerwacji użytkownika (nadchodzące, przeszłe, anulowane) |
+| Anulowanie rezerwacji | ✅ | Możliwość anulowania przez gościa |
+| Potwierdzanie rezerwacji | ✅ | Zatwierdzanie rezerwacji przez gospodarza |
+| Komunikacja host-gość | ✅ | Czat między gościem a gospodarzem w ramach rezerwacji |
+| Recenzje | ✅ | Dodawanie ocen miejsc po zakończonym pobycie |
 | Ulubione | ✅ | Dodawanie/usuwanie z ulubionych |
-| Panel gospodarza | ✅ | Zarządzanie własnymi miejscami |
+| Panel gospodarza | ✅ | Zarządzanie własnymi miejscami i statystyki |
 | Dodawanie miejsca | ✅ | Tworzenie nowego ogłoszenia |
 | Edycja miejsca | ✅ | Aktualizacja istniejącego ogłoszenia |
-| Profil użytkownika | ✅ | Edycja danych osobowych |
+| Usuwanie miejsca | ✅ | Możliwość usunięcia miejsca przez gospodarza |
+| Zarządzanie zdjęciami | ✅ | Dodawanie, usuwanie i ustawianie głównego zdjęcia |
+| Profil użytkownika | ✅ | Edycja danych osobowych (imię, nazwisko, email, hasło, avatar) |
 | Upgrade do HOST | ✅ | Zmiana roli na gospodarza |
 | Formularz kontaktowy | ✅ | Wysyłanie wiadomości |
 | Powiadomienia async | ✅ | RabbitMQ dla powiadomień |
@@ -398,6 +402,7 @@ Backend API: http://localhost:8080
 | GET | `/api/users/me` | Pobierz dane zalogowanego użytkownika | ✅ |
 | PUT | `/api/users/me` | Aktualizuj dane użytkownika | ✅ |
 | POST | `/api/users/me/upgrade-to-host` | Upgrade do roli HOST | ✅ |
+| DELETE | `/api/users/{id}` | Usuń użytkownika | ✅ ADMIN |
 
 ### Endpointy miejsc
 
@@ -409,12 +414,15 @@ Backend API: http://localhost:8080
 | GET | `/api/places/city/{cityId}` | Miejsca w mieście | ❌ |
 | POST | `/api/places` | Utwórz nowe miejsce | ✅ HOST |
 | PUT | `/api/places/{id}` | Aktualizuj miejsce | ✅ HOST |
+| PATCH | `/api/places/{id}/status` | Zmień status miejsca | ✅ HOST |
+| DELETE | `/api/places/{id}` | Usuń miejsce | ✅ HOST |
 
 ### Endpointy rezerwacji
 
 | Metoda | Endpoint | Opis | Auth |
 |--------|----------|------|------|
 | GET | `/api/reservations` | Moje rezerwacje | ✅ |
+| GET | `/api/reservations/{id}` | Szczegóły rezerwacji | ✅ |
 | GET | `/api/reservations/upcoming` | Nadchodzące rezerwacje | ✅ |
 | GET | `/api/reservations/past` | Przeszłe rezerwacje | ✅ |
 | GET | `/api/reservations/cancelled` | Anulowane rezerwacje | ✅ |
@@ -442,7 +450,25 @@ Backend API: http://localhost:8080
 | Metoda | Endpoint | Opis | Auth |
 |--------|----------|------|------|
 | GET | `/api/host/places` | Moje miejsca | ✅ HOST |
+| GET | `/api/host/places/{placeId}/reservations` | Rezerwacje dla miejsca | ✅ HOST |
 | GET | `/api/host/stats` | Statystyki gospodarza | ✅ HOST |
+
+### Endpointy wiadomości (komunikacja host-gość)
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| GET | `/api/messages/reservation/{reservationId}` | Pobierz wiadomości dla rezerwacji | ✅ |
+| POST | `/api/messages` | Wyślij wiadomość | ✅ |
+
+### Endpointy zarządzania zdjęciami
+
+| Metoda | Endpoint | Opis | Auth |
+|--------|----------|------|------|
+| POST | `/api/files/places/{placeId}/images` | Dodaj zdjęcie do miejsca | ✅ HOST |
+| DELETE | `/api/files/places/images/{imageId}` | Usuń zdjęcie | ✅ HOST |
+| PATCH | `/api/files/places/images/{imageId}/set-main` | Ustaw jako główne zdjęcie | ✅ HOST |
+| POST | `/api/files/avatar` | Dodaj/zmień avatar użytkownika | ✅ |
+| DELETE | `/api/files/avatar` | Usuń avatar użytkownika | ✅ |
 
 ### Pozostałe endpointy
 

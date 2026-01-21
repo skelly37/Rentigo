@@ -33,8 +33,8 @@ else
 fi
 
 echo ""
-echo "[2/3] Building application..."
-mvn package -DskipTests -q
+echo "[2/3] Building application (backend + React frontend)..."
+mvn clean install -DskipTests
 
 echo ""
 echo "[3/3] Starting application..."

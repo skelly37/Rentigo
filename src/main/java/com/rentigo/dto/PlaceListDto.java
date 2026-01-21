@@ -24,4 +24,5 @@ public class PlaceListDto {
     private String mainImageUrl;
     private Boolean isFavorite;
     private Long ownerId;
+    private Integer reservationCount;
 }

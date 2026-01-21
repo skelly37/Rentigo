@@ -20,10 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -65,19 +67,24 @@ public class PlaceController {
     public ResponseEntity<PageResponse<PlaceListDto>> getPlacesByCity(
             @PathVariable Long cityId,
             @RequestParam(required = false) Integer guests,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @CurrentUser UserPrincipal userPrincipal) {
         Pageable pageable = PageRequest.of(page, size);
         User currentUser = userPrincipal != null ? userPrincipal.getUser() : null;
-        return ResponseEntity.ok(PageResponse.of(placeService.getPlacesByCity(cityId, guests, pageable, currentUser)));
+        return ResponseEntity.ok(PageResponse.of(placeService.getPlacesByCity(cityId, guests, checkIn, checkOut, pageable, currentUser)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Pobierz szczegóły miejsca")
-    public ResponseEntity<PlaceDto> getPlace(@PathVariable Long id) {
+    public ResponseEntity<PlaceDto> getPlace(
+            @PathVariable Long id,
+            @CurrentUser UserPrincipal userPrincipal) {
         Place place = placeService.findById(id);
-        return ResponseEntity.ok(placeService.toDto(place));
+        User currentUser = userPrincipal != null ? userPrincipal.getUser() : null;
+        return ResponseEntity.ok(placeService.toDto(place, currentUser));
     }
 
     @PostMapping

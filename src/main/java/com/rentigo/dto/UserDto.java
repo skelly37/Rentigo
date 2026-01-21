@@ -18,4 +18,5 @@ public class UserDto {
     private String initials;
     private Role role;
     private LocalDateTime createdAt;
+    private Long placeCount;
 }

@@ -58,8 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-                .antMatchers("/", "/*.html", "/*.css", "/*.js",
-                    "/images/**", "/css/**", "/js/**", "/uploads/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/cities/**").permitAll()
                 .antMatchers("/api/amenities/**").permitAll()
@@ -69,7 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                 .antMatchers("/api/host/**").hasAnyRole("HOST", "ADMIN")
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated();
+                .antMatchers("/api/**").authenticated()
+                .anyRequest().permitAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

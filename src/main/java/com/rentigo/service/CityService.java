@@ -18,6 +18,7 @@ public class CityService {
             .id(city.getId())
             .name(city.getName())
             .country(city.getCountry())
+            .placeCount(city.getPlaces() != null ? city.getPlaces().size() : 0)
             .build();
     }
 

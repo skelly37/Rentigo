@@ -37,5 +37,6 @@ public class PlaceDto {
     private Set<AmenityDto> amenities;
     private List<PlaceImageDto> images;
     private String mainImageUrl;
+    private Boolean isFavorite;
     private LocalDateTime createdAt;
 }

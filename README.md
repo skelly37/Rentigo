@@ -30,11 +30,13 @@ Rentigo to nowoczesna platforma internetowa umożliwiająca użytkownikom wyszuk
 
 ### Frontend
 
-| Technologia | Uzasadnienie |
-|-------------|--------------|
-| **Vanilla JavaScript** | Lekkość, brak dodatkowych zależności, szybkie ładowanie |
-| **HTML5/CSS3** | Semantyczne znaczniki, responsywny design, Flexbox/Grid |
-| **Fetch API** | Natywna obsługa HTTP, Promise-based, czysty kod |
+| Technologia | Wersja | Uzasadnienie |
+|-------------|--------|--------------|
+| **React** | 18.2.0 | Nowoczesna biblioteka UI, komponentowy model, wydajne renderowanie, bogaty ekosystem |
+| **React Router** | 6.20.0 | Routing po stronie klienta, SPA navigation, protected routes |
+| **Vite** | 5.0.8 | Szybki build tool, HMR (Hot Module Replacement), optymalizacja produkcyjna |
+| **Fetch API** | Native | Natywna obsługa HTTP, Promise-based, czysty kod |
+| **CSS3** | - | Responsywny design z media queries, Flexbox/Grid, mobile-first approach |
 
 ### Dodatkowe narzędzia
 
@@ -116,6 +118,48 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 │          │◀───────────────────────────── │          │
 └──────────┘   {places data}               └──────────┘
 ```
+
+### Architektura Frontend (React)
+
+```
+┌────────────────────────────────────────────────────────┐
+│                    React Application                    │
+├────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────┐  │
+│  │              React Router (SPA)                   │  │
+│  │  - Route Guards (PrivateRoute)                   │  │
+│  │  - Dynamic routing (/place/:id)                  │  │
+│  └──────────────────────────────────────────────────┘  │
+│                          │                              │
+│  ┌──────────────────────┴──────────────────────────┐  │
+│  │           Context API (AuthContext)              │  │
+│  │  - User state management                         │  │
+│  │  - Token management                              │  │
+│  │  - Login/Logout functions                        │  │
+│  └──────────────────────────────────────────────────┘  │
+│                          │                              │
+│  ┌──────────────┬────────┴────────┬──────────────┐    │
+│  │   Pages      │   Components    │   Services   │    │
+│  │  - HomePage  │   - Navbar      │   - api.js   │    │
+│  │  - SearchPage│   - Footer      │   - Fetch    │    │
+│  │  - Profile   │   - Layout      │              │    │
+│  │  - ...       │   - Cards       │              │    │
+│  └──────────────┴─────────────────┴──────────────┘    │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │   REST API (Backend)   │
+              │   Spring Boot :8080    │
+              └───────────────────────┘
+```
+
+**Kluczowe koncepcje React:**
+- **Komponenty** - Modularne, wielokrotnego użytku elementy UI
+- **Hooks** - useState, useEffect, useContext dla zarządzania stanem
+- **Context API** - Globalne zarządzanie stanem autoryzacji
+- **React Router** - Client-side routing, SPA navigation
+- **Vite** - Szybki build tool z HMR dla lepszego DX
 
 ## Diagram ERD
 
@@ -268,10 +312,12 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 
 ### Wymagania
 
-- Java 17+
+- Java 11+
 - Maven 3.8+
 - PostgreSQL 15+
 - RabbitMQ 3.x (opcjonalnie)
+- Node.js 18+ (dla developmentu frontendu)
+- npm 9+ (dla developmentu frontendu)
 
 ### Krok 1: Konfiguracja bazy danych
 
@@ -303,8 +349,10 @@ spring.rabbitmq.password=guest
 
 ### Krok 3: Uruchomienie aplikacji
 
+#### Opcja A: Uruchomienie pełnej aplikacji (zalecane dla produkcji)
+
 ```bash
-# Zbuduj projekt
+# Zbuduj projekt (frontend + backend)
 mvn clean install
 
 # Uruchom aplikację
@@ -312,6 +360,23 @@ mvn spring-boot:run
 ```
 
 Aplikacja będzie dostępna pod adresem: http://localhost:8080
+
+#### Opcja B: Development mode z Hot Reload (zalecane dla developmentu)
+
+**Terminal 1 - Backend:**
+```bash
+mvn spring-boot:run
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend dev server: http://localhost:3000 (proxy do backendu na :8080)
+Backend API: http://localhost:8080
 
 ### Krok 4: Dostęp do dokumentacji API
 
@@ -402,6 +467,29 @@ Aplikacja będzie dostępna pod adresem: http://localhost:8080
 
 ```
 rentigo/
+├── frontend/                     # Frontend React
+│   ├── src/
+│   │   ├── assets/              # Zasoby statyczne
+│   │   │   └── css/
+│   │   ├── components/          # Komponenty React
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── Layout.jsx
+│   │   ├── context/             # React Context (AuthContext)
+│   │   ├── hooks/               # Custom hooks
+│   │   ├── pages/               # Strony aplikacji
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── SearchPage.jsx
+│   │   │   ├── PlaceDetailsPage.jsx
+│   │   │   └── ...
+│   │   ├── services/            # API client
+│   │   │   └── api.js
+│   │   ├── App.jsx              # Root component
+│   │   └── main.jsx             # Entry point
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
 ├── src/
 │   ├── main/
 │   │   ├── java/com/rentigo/
@@ -433,10 +521,7 @@ rentigo/
 │   │   │       ├── PlaceService.java
 │   │   │       └── ...
 │   │   └── resources/
-│   │       ├── static/           # Frontend
-│   │       │   ├── css/
-│   │       │   ├── js/
-│   │       │   └── *.html
+│   │       ├── static/           # Zbudowany frontend (generowany)
 │   │       └── application.properties
 │   └── test/                     # Testy
 ├── pom.xml

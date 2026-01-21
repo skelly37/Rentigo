@@ -17,6 +17,7 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final PlaceService placeService;
 
+    @Transactional(readOnly = true)
     public List<PlaceListDto> getUserFavorites(User user) {
         return favoriteRepository.findByUser(user).stream()
             .map(f -> placeService.toListDto(f.getPlace(), user))

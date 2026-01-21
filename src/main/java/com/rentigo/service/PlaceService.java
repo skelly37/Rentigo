@@ -20,12 +20,23 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceImageRepository placeImageRepository;
     private final FavoriteRepository favoriteRepository;
+    private final ReservationRepository reservationRepository;
     private final CityService cityService;
     private final AmenityService amenityService;
     private final UserService userService;
     private final FileStorageService fileStorageService;
 
     public PlaceDto toDto(Place place) {
+        return toDto(place, null);
+    }
+
+    public PlaceDto toDto(Place place, User currentUser) {
+        UserDto ownerDto = userService.toDto(place.getOwner());
+        ownerDto.setPlaceCount(placeRepository.countByOwner(place.getOwner()));
+
+        boolean isFavorite = currentUser != null &&
+            favoriteRepository.existsByUserAndPlace(currentUser, place);
+
         return PlaceDto.builder()
             .id(place.getId())
             .name(place.getName())
@@ -47,7 +58,7 @@ public class PlaceService {
             .rating(place.getRating())
             .reviewCount(place.getReviewCount())
             .status(place.getStatus())
-            .owner(userService.toDto(place.getOwner()))
+            .owner(ownerDto)
             .amenities(place.getAmenities().stream()
                 .map(amenityService::toDto)
                 .collect(Collectors.toSet()))
@@ -55,6 +66,7 @@ public class PlaceService {
                 .map(this::toImageDto)
                 .collect(Collectors.toList()))
             .mainImageUrl(place.getMainImageUrl())
+            .isFavorite(isFavorite)
             .createdAt(place.getCreatedAt())
             .build();
     }
@@ -62,6 +74,8 @@ public class PlaceService {
     public PlaceListDto toListDto(Place place, User currentUser) {
         boolean isFavorite = currentUser != null &&
             favoriteRepository.existsByUserAndPlace(currentUser, place);
+
+        int reservationCount = reservationRepository.findByPlace(place).size();
 
         return PlaceListDto.builder()
             .id(place.getId())
@@ -78,6 +92,7 @@ public class PlaceService {
             .mainImageUrl(place.getMainImageUrl())
             .isFavorite(isFavorite)
             .ownerId(place.getOwner() != null ? place.getOwner().getId() : null)
+            .reservationCount(reservationCount)
             .build();
     }
 
@@ -114,13 +129,29 @@ public class PlaceService {
             .map(p -> toListDto(p, currentUser));
     }
 
-    public Page<PlaceListDto> getPlacesByCity(Long cityId, Integer guests, Pageable pageable, User currentUser) {
+    public Page<PlaceListDto> getPlacesByCity(Long cityId, Integer guests, java.time.LocalDate checkIn, java.time.LocalDate checkOut, Pageable pageable, User currentUser) {
         Page<Place> places;
         if (guests != null && guests > 0) {
             places = placeRepository.findAvailablePlaces(cityId, guests, PlaceStatus.ACTIVE, pageable);
         } else {
             places = placeRepository.findByCityIdAndStatus(cityId, PlaceStatus.ACTIVE, pageable);
         }
+
+        if (checkIn != null && checkOut != null) {
+            List<Place> placeList = places.getContent();
+            List<Place> availablePlaces = placeList.stream()
+                .filter(place -> {
+                    List<com.rentigo.entity.Reservation> conflicts = reservationRepository.findConflictingReservations(place, checkIn, checkOut);
+                    return conflicts.isEmpty();
+                })
+                .collect(java.util.stream.Collectors.toList());
+            return new org.springframework.data.domain.PageImpl<>(
+                availablePlaces.stream().map(p -> toListDto(p, currentUser)).collect(java.util.stream.Collectors.toList()),
+                pageable,
+                availablePlaces.size()
+            );
+        }
+
         return places.map(p -> toListDto(p, currentUser));
     }
 

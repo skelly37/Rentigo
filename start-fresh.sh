@@ -34,8 +34,9 @@ done
 echo " OK"
 
 echo ""
-echo "[4/5] Building application..."
-mvn clean package -DskipTests -q
+echo "[4/5] Building application (backend + React frontend)..."
+echo "  This will take a minute on first run..."
+mvn clean install -DskipTests
 
 echo ""
 echo "[5/5] Starting application..."

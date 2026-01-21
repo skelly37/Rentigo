@@ -39,4 +39,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     @Query("SELECT COUNT(p) FROM Place p WHERE p.owner = :owner AND p.status = :status")
     long countByOwnerAndStatus(@Param("owner") User owner, @Param("status") PlaceStatus status);
+
+    long countByOwner(User owner);
 }

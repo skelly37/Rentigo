@@ -147,7 +147,7 @@ export default function PlaceDetailsPage() {
         }}>
           <div style={{ gridRow: 'span 2' }}>
             <img
-              src={place.images?.[0]?.url || '/placeholder.jpg'}
+              src={place.images?.[0]?.url}
               alt={place.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -247,7 +247,7 @@ export default function PlaceDetailsPage() {
                   borderRadius: '12px'
                 }}>
                   <img
-                    src={place.owner.avatarUrl || '/placeholder.jpg'}
+                    src={place.owner.avatarUrl}
                     alt={`${place.owner.firstName} ${place.owner.lastName}`}
                     style={{
                       width: '80px',

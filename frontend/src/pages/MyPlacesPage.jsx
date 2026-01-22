@@ -237,7 +237,7 @@ export default function MyPlacesPage() {
                   {places.map(place => (
                     <div key={place.id} className="card">
                       <img
-                        src={place.mainImageUrl || place.images?.[0]?.url || '/placeholder.jpg'}
+                        src={place.mainImageUrl || place.images?.[0]?.url}
                         alt={place.name}
                         className="card-image"
                       />

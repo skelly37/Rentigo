@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import api from '../services/api'
 import { getTodayDate, getTomorrowDate } from '../utils/helpers'
+import placeholderImg from '../assets/placeholder.jpg'
 
 export default function HomePage() {
   const [cities, setCities] = useState([])
@@ -47,7 +48,7 @@ export default function HomePage() {
   return (
     <Layout>
       <div className="hero-section" style={{
-        background: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(/placeholder.jpg)',
+        background: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${placeholderImg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '120px 20px',

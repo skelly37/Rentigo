@@ -80,19 +80,19 @@ public class DataLoader implements CommandLineRunner {
     private List<User> createUsers() {
         List<User> users = Arrays.asList(
             User.builder().email("admin@rentigo.pl").password(passwordEncoder.encode("admin123"))
-                .firstName("Admin").lastName("System").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.ADMIN).build(),
+                .firstName("Admin").lastName("System").avatarUrl("/uploads/avatars/man.jpg").role(Role.ADMIN).build(),
             User.builder().email("jan.kowalski@example.com").password(passwordEncoder.encode("password123"))
-                .firstName("Jan").lastName("Kowalski").phone("+48 123 456 789").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.HOST).build(),
+                .firstName("Jan").lastName("Kowalski").phone("+48 123 456 789").avatarUrl("/uploads/avatars/man.jpg").role(Role.HOST).build(),
             User.builder().email("anna.nowak@example.com").password(passwordEncoder.encode("password123"))
-                .firstName("Anna").lastName("Nowak").phone("+48 987 654 321").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.HOST).build(),
+                .firstName("Anna").lastName("Nowak").phone("+48 987 654 321").avatarUrl("/uploads/avatars/woman.jpg").role(Role.HOST).build(),
             User.builder().email("piotr.wisniewski@example.com").password(passwordEncoder.encode("password123"))
-                .firstName("Piotr").lastName("Wiśniewski").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.USER).build(),
+                .firstName("Piotr").lastName("Wiśniewski").avatarUrl("/uploads/avatars/man.jpg").role(Role.USER).build(),
             User.builder().email("maria.zielinska@example.com").password(passwordEncoder.encode("password123"))
-                .firstName("Maria").lastName("Zielińska").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.USER).build(),
+                .firstName("Maria").lastName("Zielińska").avatarUrl("/uploads/avatars/woman.jpg").role(Role.USER).build(),
             User.builder().email("tomasz.lewandowski@example.com").password(passwordEncoder.encode("password123"))
-                .firstName("Tomasz").lastName("Lewandowski").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.USER).build(),
+                .firstName("Tomasz").lastName("Lewandowski").avatarUrl("/uploads/avatars/man.jpg").role(Role.USER).build(),
             User.builder().email("katarzyna.dabrowska@example.com").password(passwordEncoder.encode("password123"))
-                .firstName("Katarzyna").lastName("Dąbrowska").avatarUrl("/uploads/avatars/placeholder.jpg").role(Role.HOST).build()
+                .firstName("Katarzyna").lastName("Dąbrowska").avatarUrl("/uploads/avatars/woman.jpg").role(Role.HOST).build()
         );
         return userRepository.saveAll(users);
     }
@@ -162,10 +162,14 @@ public class DataLoader implements CommandLineRunner {
 
         List<Place> savedPlaces = placeRepository.saveAll(places);
 
+        int i = 0;
         for (Place place : savedPlaces) {
             PlaceImage mainImage = PlaceImage.builder()
-                    .place(place).url("/uploads/places/placeholder.jpg").isMain(true).displayOrder(0).build();
+                    .place(place).url("/uploads/places/" + i++ + ".jpg").isMain(true).displayOrder(0).build();
+            PlaceImage secondaryImage = PlaceImage.builder()
+                            .place(place).url("/uploads/places/" + i++ + ".jpg").isMain(false).displayOrder(1).build();
             placeImageRepository.save(mainImage);
+            placeImageRepository.save(secondaryImage);
         }
 
         return savedPlaces;

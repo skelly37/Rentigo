@@ -1,7 +1,7 @@
 .login-page {
     min-height: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
-                url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80') center/cover no-repeat;
+                url('../assets/placeholder.jpg') center/cover no-repeat;
     display: flex;
     flex-direction: column;
 }

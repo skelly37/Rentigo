@@ -126,7 +126,7 @@ export default function FavoritesPage() {
                         </button>
 
                         <img
-                          src={place.mainImageUrl || '/placeholder.jpg'}
+                          src={place.mainImageUrl}
                           alt={place.name}
                           className="card-image"
                         />

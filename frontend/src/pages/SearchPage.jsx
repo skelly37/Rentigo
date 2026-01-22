@@ -187,7 +187,7 @@ export default function SearchPage() {
                       style={{ cursor: 'pointer' }}
                     >
                       <img
-                        src={place.mainImageUrl || place.images?.[0]?.url || '/placeholder.jpg'}
+                        src={place.mainImageUrl || place.images?.[0]?.url}
                         alt={place.name}
                         className="card-image"
                       />

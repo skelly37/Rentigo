@@ -191,7 +191,7 @@ export default function MyReservationsPage() {
                 {reservations.map(reservation => (
                   <div key={reservation.id} className="card">
                     <img
-                      src={reservation.place?.mainImageUrl || '/placeholder.jpg'}
+                      src={reservation.place?.mainImageUrl}
                       alt={reservation.place?.name}
                       className="card-image"
                     />

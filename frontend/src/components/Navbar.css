@@ -134,10 +134,6 @@
         display: none;
     }
 
-    .nav-link.mobile-visible {
-        display: block;
-    }
-
     .navbar-user,
     .btn-primary {
         display: flex;

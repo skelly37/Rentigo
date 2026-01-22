@@ -162,7 +162,7 @@ public class DataLoader implements CommandLineRunner {
 
         List<Place> savedPlaces = placeRepository.saveAll(places);
 
-        int i = 0;
+        int i = 1;
         for (Place place : savedPlaces) {
             PlaceImage mainImage = PlaceImage.builder()
                     .place(place).url("/uploads/places/" + i++ + ".jpg").isMain(true).displayOrder(0).build();

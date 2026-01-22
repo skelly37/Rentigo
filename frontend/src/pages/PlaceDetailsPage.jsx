@@ -164,18 +164,30 @@ export default function PlaceDetailsPage() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '2fr 1fr',
-          gap: '40px'
-        }}>
-          <div>
+          gridTemplateColumns: 'minmax(0, 2fr) minmax(300px, 1fr)',
+          gap: '40px',
+          alignItems: 'start'
+        }}
+        className="place-details-grid"
+        >
+          <div style={{
+            minWidth: 0,
+            overflow: 'hidden'
+          }}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'flex-start',
               marginBottom: '20px'
             }}>
-              <div>
-                <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '12px' }}>
+              <div style={{ maxWidth: '100%', overflow: 'hidden' }}>
+                <h1 style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  marginBottom: '12px',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word'
+                }}>
                   {place.name}
                 </h1>
                 {reviewSummary && reviewSummary.reviewCount > 0 && (
@@ -223,7 +235,9 @@ export default function PlaceDetailsPage() {
                 lineHeight: '1.6',
                 whiteSpace: 'pre-wrap',
                 wordWrap: 'break-word',
-                overflowWrap: 'break-word'
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
+                maxWidth: '100%'
               }}>
                 {place.description}
               </p>
@@ -355,7 +369,12 @@ export default function PlaceDetailsPage() {
                           <span>{review.rating}</span>
                         </div>
                       </div>
-                      <p style={{ color: '#666', lineHeight: '1.6' }}>
+                      <p style={{
+                        color: '#666',
+                        lineHeight: '1.6',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word'
+                      }}>
                         {review.comment}
                       </p>
                     </div>

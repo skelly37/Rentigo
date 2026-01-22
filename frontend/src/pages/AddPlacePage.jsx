@@ -9,6 +9,7 @@ export default function AddPlacePage() {
   const [amenities, setAmenities] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [selectedImages, setSelectedImages] = useState([])
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -55,6 +56,23 @@ export default function AddPlacePage() {
     setFormData({ ...formData, amenityIds: newIds })
   }
 
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files)
+
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`Plik ${file.name} jest za duży. Maksymalny rozmiar to 5MB.`)
+        return
+      }
+    }
+
+    setSelectedImages([...selectedImages, ...files])
+  }
+
+  const handleRemoveImage = (index) => {
+    setSelectedImages(selectedImages.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -72,8 +90,17 @@ export default function AddPlacePage() {
       }
 
       const newPlace = await api.createPlace(placeData)
+
+      if (selectedImages.length > 0) {
+        for (const image of selectedImages) {
+          const formData = new FormData()
+          formData.append('file', image)
+          await api.uploadImage(newPlace.id, formData)
+        }
+      }
+
       alert('Miejsce zostało dodane!')
-      navigate(`/edit-place/${newPlace.id}`)
+      navigate(`/my-places`)
     } catch (err) {
       setError(err.message)
       window.scrollTo(0, 0)
@@ -111,6 +138,101 @@ export default function AddPlacePage() {
 
           <form onSubmit={handleSubmit}>
             <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Zdjęcia
+            </h2>
+
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gap: '16px',
+                marginBottom: '16px'
+              }}>
+                {selectedImages.map((file, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      position: 'relative',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      border: index === 0 ? '3px solid #e67e22' : '1px solid #e0e0e0'
+                    }}
+                  >
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Preview ${index + 1}`}
+                      style={{
+                        width: '100%',
+                        height: '150px',
+                        objectFit: 'cover'
+                      }}
+                    />
+                    {index === 0 && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '8px',
+                        left: '8px',
+                        background: '#e67e22',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}>
+                        Główne
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="btn btn-danger btn-small"
+                      style={{
+                        position: 'absolute',
+                        bottom: '8px',
+                        right: '8px',
+                        fontSize: '12px',
+                        padding: '4px 8px'
+                      }}
+                    >
+                      Usuń
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <label
+                style={{
+                  display: 'inline-block',
+                  padding: '12px 24px',
+                  background: '#e67e22',
+                  color: 'white',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  transition: 'background 0.2s'
+                }}
+              >
+                + Dodaj zdjęcia
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelect}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <p style={{ color: '#666', fontSize: '14px', marginTop: '8px' }}>
+                Maksymalny rozmiar pliku: 5MB. Pierwsze zdjęcie będzie głównym.
+              </p>
+            </div>
+
+            <h2 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              marginBottom: '20px',
+              paddingTop: '24px',
+              borderTop: '1px solid #e0e0e0'
+            }}>
               Podstawowe informacje
             </h2>
 
@@ -337,7 +459,7 @@ export default function AddPlacePage() {
                 disabled={loading}
                 style={{ flex: '1' }}
               >
-                {loading ? 'Dodawanie...' : 'Dodaj miejsce'}
+                {loading ? (selectedImages.length > 0 ? 'Dodawanie i przesyłanie zdjęć...' : 'Dodawanie...') : 'Dodaj miejsce'}
               </button>
             </div>
           </form>

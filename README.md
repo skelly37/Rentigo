@@ -3,6 +3,7 @@
 Rentigo to nowoczesna platforma internetowa umożliwiająca użytkownikom wyszukiwanie i rezerwację miejsc noclegowych w różnych miastach Polski, a także dodawanie ogłoszeń przez właścicieli nieruchomości.
 
 ## Spis treści
+- [Demonstracja](#demonstracja)
 - [Wybór technologii](#wybór-technologii)
 - [Architektura](#architektura)
 - [Diagram ERD](#diagram-erd)
@@ -10,6 +11,11 @@ Rentigo to nowoczesna platforma internetowa umożliwiająca użytkownikom wyszuk
 - [Role użytkowników](#role-użytkowników)
 - [Instrukcja uruchomienia](#instrukcja-uruchomienia)
 - [Dokumentacja API](#dokumentacja-api)
+
+## Demonstracja
+
+https://github.com/user-attachments/assets/db3daafa-dca3-4c63-9fcf-355608a210f4
+
 
 ## Wybór technologii
 

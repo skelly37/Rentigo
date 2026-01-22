@@ -18,7 +18,7 @@ Rentigo to nowoczesna platforma internetowa umożliwiająca użytkownikom wyszuk
 
 | Technologia | Wersja | Uzasadnienie |
 |-------------|--------|--------------|
-| **Java** | 17 | Stabilność, wydajność, bogaty ekosystem bibliotek i szeroka społeczność |
+| **Java** | 11 | Stabilność, wydajność, bogaty ekosystem bibliotek i szeroka społeczność |
 | **Spring Boot** | 2.7.18 | Szybkie tworzenie aplikacji, autowiring, bogata integracja z bazami danych i systemami kolejkowymi |
 | **Spring Security** | 5.7.x | Kompleksowe rozwiązanie do uwierzytelniania i autoryzacji |
 | **Spring Data JPA** | 2.7.x | Uproszczony dostęp do bazy danych, automatyczne generowanie zapytań |
@@ -425,8 +425,6 @@ Backend API: http://localhost:8080
 | GET | `/api/places/city/{cityId}` | Miejsca w mieście | ❌ |
 | POST | `/api/places` | Utwórz nowe miejsce | ✅ HOST |
 | PUT | `/api/places/{id}` | Aktualizuj miejsce | ✅ HOST |
-| PATCH | `/api/places/{id}/status` | Zmień status miejsca | ✅ HOST |
-| DELETE | `/api/places/{id}` | Usuń miejsce | ✅ HOST |
 | PATCH | `/api/places/{id}/status` | Zmień status miejsca | ✅ HOST |
 | DELETE | `/api/places/{id}` | Usuń miejsce | ✅ HOST |
 

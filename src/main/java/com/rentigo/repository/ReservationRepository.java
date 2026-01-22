@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -22,10 +21,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByPlace(Place place);
 
     long countByPlace(Place place);
-
-    Optional<Reservation> findByReservationNumber(String reservationNumber);
-
-    boolean existsByUserAndPlaceAndStatus(User user, Place place, ReservationStatus status);
 
     boolean existsByUserAndPlaceAndStatusIn(User user, Place place, List<ReservationStatus> statuses);
 

@@ -37,15 +37,4 @@ public class PermissionChecker {
         }
     }
 
-    public static void requireAdmin(User user) {
-        if (user.getRole() != Role.ADMIN) {
-            throw new ForbiddenException("Brak uprawnień - tylko administrator może wykonać tę operację");
-        }
-    }
-
-    public static void requireHostOrAdmin(User user) {
-        if (user.getRole() != Role.HOST && user.getRole() != Role.ADMIN) {
-            throw new ForbiddenException("Brak uprawnień - wymagana rola HOST lub ADMIN");
-        }
-    }
 }

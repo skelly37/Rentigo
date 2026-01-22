@@ -7,7 +7,6 @@ import com.rentigo.exception.BadRequestException;
 import com.rentigo.exception.ForbiddenException;
 import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.ReservationRepository;
-import com.rentigo.util.PermissionChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -207,7 +206,7 @@ public class ReservationService {
 
     @Transactional
     public void deleteReservation(Long reservationId, User user) {
-        if (!user.getRole().name().equals("ADMIN")) {
+        if (user.getRole() != Role.ADMIN) {
             throw new ForbiddenException("Brak uprawnień - tylko administrator może usuwać rezerwacje");
         }
 

@@ -14,7 +14,7 @@ public class ContactService {
     private final NotificationService notificationService;
 
     @Transactional
-    public ContactMessage createContactMessage(ContactRequest request) {
+    public void createContactMessage(ContactRequest request) {
         ContactMessage message = ContactMessage.builder()
             .firstName(request.getFirstName())
             .lastName(request.getLastName())
@@ -27,6 +27,5 @@ public class ContactService {
 
         notificationService.sendContactNotification(message);
 
-        return message;
     }
 }

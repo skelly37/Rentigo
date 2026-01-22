@@ -37,13 +37,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiResponse> handleBadCredentials(BadCredentialsException ex) {
+    public ResponseEntity<ApiResponse> handleBadCredentials() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(ApiResponse.error("Nieprawidłowy email lub hasło"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<ApiResponse> handleAccessDenied() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .body(ApiResponse.error("Brak uprawnień do wykonania tej operacji"));
     }

@@ -10,7 +10,6 @@ import com.rentigo.exception.ConflictException;
 import com.rentigo.exception.ForbiddenException;
 import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.UserRepository;
-import com.rentigo.util.PermissionChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class UserService {
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
+            .orElseThrow(() -> new ResourceNotFoundException("Użytkownik nie znaleziony"));
     }
 
     public boolean existsByEmail(String email) {
@@ -117,7 +116,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId, User currentUser) {
-        if (!currentUser.getRole().name().equals("ADMIN")) {
+        if (currentUser.getRole() != Role.ADMIN) {
             throw new ForbiddenException("Brak uprawnień - tylko administrator może usuwać użytkowników");
         }
 

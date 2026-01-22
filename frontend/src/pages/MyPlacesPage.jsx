@@ -45,7 +45,7 @@ export default function MyPlacesPage() {
     try {
       await api.deletePlace(id)
       setPlaces(places.filter(place => place.id !== id))
-      loadData()
+      await loadData()
     } catch (err) {
       alert(err.message)
     }
@@ -68,9 +68,9 @@ export default function MyPlacesPage() {
     try {
       await api.confirmReservation(reservationId)
       if (selectedPlaceId) {
-        loadPlaceReservations(selectedPlaceId)
+        await loadPlaceReservations(selectedPlaceId)
       }
-      loadData()
+      await loadData()
     } catch (err) {
       alert(err.message)
     }
@@ -84,9 +84,9 @@ export default function MyPlacesPage() {
     try {
       await api.cancelReservation(reservationId)
       if (selectedPlaceId) {
-        loadPlaceReservations(selectedPlaceId)
+        await loadPlaceReservations(selectedPlaceId)
       }
-      loadData()
+      await loadData()
     } catch (err) {
       alert(err.message)
     }

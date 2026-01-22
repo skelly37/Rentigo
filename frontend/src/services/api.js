@@ -74,11 +74,6 @@ class ApiService {
       body: JSON.stringify({ firstName, lastName, email, password })
     })
   }
-
-  async getMe() {
-    return this.request('/users/me')
-  }
-
   async updateMe(data) {
     return this.request('/users/me', {
       method: 'PUT',
@@ -99,11 +94,6 @@ class ApiService {
   async getPlace(id) {
     return this.request(`/places/${id}`)
   }
-
-  async searchPlaces(query) {
-    return this.request(`/places/search?q=${encodeURIComponent(query)}`)
-  }
-
   async getPlacesByCity(cityId, guests, checkIn, checkOut) {
     let url = `/places/city/${cityId}`
     const params = new URLSearchParams()

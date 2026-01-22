@@ -9,7 +9,7 @@ import com.rentigo.entity.ReservationStatus;
 import com.rentigo.entity.User;
 import com.rentigo.exception.BadRequestException;
 import com.rentigo.exception.ConflictException;
-import com.rentigo.exception.ForbiddenException;
+import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.PlaceRepository;
 import com.rentigo.repository.ReservationRepository;
 import com.rentigo.repository.ReviewRepository;
@@ -108,14 +108,9 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
-            .orElseThrow(() -> new RuntimeException("Opinia nie znaleziona"));
+            .orElseThrow(() -> new ResourceNotFoundException("Opinia nie znaleziona"));
 
-        boolean isOwner = review.getUser().getId().equals(user.getId());
-        boolean isAdmin = user.getRole().name().equals("ADMIN");
-
-        if (!isOwner && !isAdmin) {
-            throw new ForbiddenException("Brak uprawnień");
-        }
+        com.rentigo.util.PermissionChecker.checkReviewOwnership(user, review);
 
         Place place = review.getPlace();
         reviewRepository.delete(review);

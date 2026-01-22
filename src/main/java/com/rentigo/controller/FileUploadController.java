@@ -10,6 +10,7 @@ import com.rentigo.security.UserPrincipal;
 import com.rentigo.service.FileStorageService;
 import com.rentigo.service.PlaceService;
 import com.rentigo.service.UserService;
+import com.rentigo.util.PermissionChecker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,7 +45,7 @@ public class FileUploadController {
             @CurrentUser UserPrincipal userPrincipal) {
 
         Place place = placeService.findById(placeId);
-        placeService.checkOwnership(place, userPrincipal.getUser());
+        PermissionChecker.checkPlaceOwnership(userPrincipal.getUser(), place);
 
         String imageUrl = fileStorageService.storeFile(file, "places", placeId);
 
@@ -84,7 +85,7 @@ public class FileUploadController {
         PlaceImage image = placeImageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Zdjęcie nie znalezione"));
 
-        placeService.checkOwnership(image.getPlace(), userPrincipal.getUser());
+        PermissionChecker.checkPlaceOwnership(userPrincipal.getUser(), image.getPlace());
 
         fileStorageService.deleteFile(image.getUrl());
         placeImageRepository.delete(image);
@@ -103,7 +104,7 @@ public class FileUploadController {
         PlaceImage image = placeImageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Zdjęcie nie znalezione"));
 
-        placeService.checkOwnership(image.getPlace(), userPrincipal.getUser());
+        PermissionChecker.checkPlaceOwnership(userPrincipal.getUser(), image.getPlace());
 
         List<PlaceImage> allImages = placeImageRepository.findByPlace(image.getPlace());
         allImages.forEach(img -> img.setIsMain(img.getId().equals(imageId)));

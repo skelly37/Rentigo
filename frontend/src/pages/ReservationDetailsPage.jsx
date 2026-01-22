@@ -72,7 +72,7 @@ export default function ReservationDetailsPage() {
 
     try {
       await api.cancelReservation(id)
-      loadReservation()
+      await loadReservation()
     } catch (err) {
       alert(err.message)
     }

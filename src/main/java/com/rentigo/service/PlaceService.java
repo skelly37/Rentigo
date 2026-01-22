@@ -2,9 +2,7 @@ package com.rentigo.service;
 
 import com.rentigo.dto.*;
 import com.rentigo.dto.request.CreatePlaceRequest;
-import com.rentigo.dto.request.PlaceImageRequest;
 import com.rentigo.entity.*;
-import com.rentigo.exception.ForbiddenException;
 import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.*;
 import com.rentigo.util.PermissionChecker;
@@ -113,10 +111,6 @@ public class PlaceService {
             .orElseThrow(() -> new ResourceNotFoundException("Miejsce nie znalezione"));
     }
 
-    public void checkOwnership(Place place, User user) {
-        PermissionChecker.checkPlaceOwnership(user, place);
-    }
-
     public Page<PlaceListDto> getActivePlaces(Pageable pageable, User currentUser) {
         return placeRepository.findByStatus(PlaceStatus.ACTIVE, pageable)
             .map(p -> toListDto(p, currentUser));
@@ -194,10 +188,7 @@ public class PlaceService {
     @Transactional
     public Place updatePlace(Long placeId, CreatePlaceRequest request, User owner) {
         Place place = findById(placeId);
-
-        if (!place.getOwner().getId().equals(owner.getId())) {
-            throw new RuntimeException("Brak uprawnień do edycji tego miejsca");
-        }
+        PermissionChecker.checkPlaceOwnership(owner, place);
 
         if (request.getName() != null) place.setName(request.getName());
         if (request.getDescription() != null) place.setDescription(request.getDescription());
@@ -226,9 +217,7 @@ public class PlaceService {
     @Transactional
     public void updatePlaceStatus(Long placeId, PlaceStatus status, User owner) {
         Place place = findById(placeId);
-        if (!place.getOwner().getId().equals(owner.getId())) {
-            throw new RuntimeException("Brak uprawnień");
-        }
+        PermissionChecker.checkPlaceOwnership(owner, place);
         place.setStatus(status);
         placeRepository.save(place);
     }
@@ -236,13 +225,7 @@ public class PlaceService {
     @Transactional
     public void deletePlace(Long placeId, User user) {
         Place place = findById(placeId);
-
-        boolean isOwner = place.getOwner().getId().equals(user.getId());
-        boolean isAdmin = user.getRole().name().equals("ADMIN");
-
-        if (!isOwner && !isAdmin) {
-            throw new RuntimeException("Brak uprawnień");
-        }
+        PermissionChecker.checkPlaceOwnership(user, place);
 
         List<PlaceImage> images = placeImageRepository.findByPlace(place);
         images.forEach(image -> fileStorageService.deleteFile(image.getUrl()));

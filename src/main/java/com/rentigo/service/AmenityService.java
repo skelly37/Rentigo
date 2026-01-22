@@ -5,6 +5,8 @@ import com.rentigo.entity.Amenity;
 import com.rentigo.repository.AmenityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ public class AmenityService {
     }
 
     public Set<Amenity> findByIds(Set<Long> ids) {
-        return amenityRepository.findAllById(ids).stream().collect(Collectors.toSet());
+        return new HashSet<>(amenityRepository.findAllById(ids));
     }
 
     public List<AmenityDto> getAllAmenities() {

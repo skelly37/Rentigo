@@ -49,7 +49,7 @@ export default function MyReservationsPage() {
 
     try {
       await api.cancelReservation(id)
-      loadReservations()
+      await loadReservations()
     } catch (err) {
       alert(err.message)
     }

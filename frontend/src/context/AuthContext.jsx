@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { createContext, useContext, useState } from 'react'
 import api from '../services/api'
 
 const AuthContext = createContext(null)
@@ -20,7 +19,7 @@ export function AuthProvider({ children }) {
     }
     return null
   })
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
 
   const login = (newToken, newUser) => {
     setToken(newToken)

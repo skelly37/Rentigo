@@ -11,17 +11,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByPlace(Place place);
 
     Page<Review> findByPlace(Place place, Pageable pageable);
-
-    List<Review> findByUser(User user);
-
-    Optional<Review> findByPlaceAndUser(Place place, User user);
 
     boolean existsByPlaceAndUser(Place place, User user);
 

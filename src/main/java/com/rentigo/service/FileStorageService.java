@@ -1,5 +1,6 @@
 package com.rentigo.service;
 
+import com.rentigo.exception.BadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class FileStorageService {
             return "/uploads/" + type + "/" + fileName;
         } catch (IOException e) {
             log.error("Failed to store file: {}", fileName, e);
-            throw new RuntimeException("Nie udało się zapisać pliku: " + e.getMessage());
+            throw new BadRequestException("Nie udało się zapisać pliku: " + e.getMessage());
         }
     }
 

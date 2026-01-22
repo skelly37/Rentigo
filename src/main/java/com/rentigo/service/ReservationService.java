@@ -3,7 +3,11 @@ package com.rentigo.service;
 import com.rentigo.dto.ReservationDto;
 import com.rentigo.dto.request.CreateReservationRequest;
 import com.rentigo.entity.*;
+import com.rentigo.exception.BadRequestException;
+import com.rentigo.exception.ForbiddenException;
+import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.ReservationRepository;
+import com.rentigo.util.PermissionChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +49,7 @@ public class ReservationService {
 
     public Reservation findById(Long id) {
         return reservationRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Rezerwacja nie znaleziona"));
+            .orElseThrow(() -> new ResourceNotFoundException("Rezerwacja nie znaleziona"));
     }
 
     public List<ReservationDto> getUserReservations(User user) {
@@ -81,7 +85,7 @@ public class ReservationService {
     public List<ReservationDto> getPlaceReservations(Long placeId, User owner) {
         Place place = placeService.findById(placeId);
         if (!place.getOwner().getId().equals(owner.getId())) {
-            throw new RuntimeException("Brak uprawnień");
+            throw new ForbiddenException("Brak uprawnień");
         }
         return reservationRepository.findByPlace(place).stream()
             .map(this::toDto)
@@ -93,25 +97,25 @@ public class ReservationService {
         Place place = placeService.findById(request.getPlaceId());
 
         if (place.getStatus() != PlaceStatus.ACTIVE) {
-            throw new RuntimeException("Miejsce nie jest dostępne do rezerwacji");
+            throw new BadRequestException("Miejsce nie jest dostępne do rezerwacji");
         }
 
         if (request.getGuests() > place.getMaxGuests()) {
-            throw new RuntimeException("Przekroczona maksymalna liczba gości");
+            throw new BadRequestException("Przekroczona maksymalna liczba gości");
         }
 
         if (!request.getCheckOut().isAfter(request.getCheckIn())) {
-            throw new RuntimeException("Data wymeldowania musi być po dacie zameldowania");
+            throw new BadRequestException("Data wymeldowania musi być po dacie zameldowania");
         }
 
         long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
 
         if (place.getMinStay() != null && nights < place.getMinStay()) {
-            throw new RuntimeException("Minimalny pobyt to " + place.getMinStay() + " nocy");
+            throw new BadRequestException("Minimalny pobyt to " + place.getMinStay() + " nocy");
         }
 
         if (place.getMaxStay() != null && place.getMaxStay() > 0 && nights > place.getMaxStay()) {
-            throw new RuntimeException("Maksymalny pobyt to " + place.getMaxStay() + " nocy");
+            throw new BadRequestException("Maksymalny pobyt to " + place.getMaxStay() + " nocy");
         }
 
         List<Reservation> conflicts = reservationRepository.findConflictingReservations(
@@ -119,7 +123,7 @@ public class ReservationService {
         );
 
         if (!conflicts.isEmpty()) {
-            throw new RuntimeException("Wybrane terminy są już zarezerwowane");
+            throw new BadRequestException("Wybrane terminy są już zarezerwowane");
         }
 
         BigDecimal nightsPrice = place.getPricePerNight().multiply(BigDecimal.valueOf(nights));
@@ -152,11 +156,11 @@ public class ReservationService {
         Reservation reservation = findById(reservationId);
 
         if (!reservation.getPlace().getOwner().getId().equals(host.getId())) {
-            throw new RuntimeException("Brak uprawnień");
+            throw new ForbiddenException("Brak uprawnień");
         }
 
         if (reservation.getStatus() != ReservationStatus.PENDING) {
-            throw new RuntimeException("Rezerwacja nie może być potwierdzona");
+            throw new BadRequestException("Rezerwacja nie może być potwierdzona");
         }
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
@@ -175,12 +179,12 @@ public class ReservationService {
         boolean isGuest = reservation.getUser().getId().equals(user.getId());
 
         if (!isOwner && !isGuest) {
-            throw new RuntimeException("Brak uprawnień");
+            throw new ForbiddenException("Brak uprawnień");
         }
 
         if (reservation.getStatus() == ReservationStatus.COMPLETED ||
             reservation.getStatus() == ReservationStatus.CANCELLED) {
-            throw new RuntimeException("Rezerwacja nie może być anulowana");
+            throw new BadRequestException("Rezerwacja nie może być anulowana");
         }
 
         reservation.setStatus(ReservationStatus.CANCELLED);
@@ -204,7 +208,7 @@ public class ReservationService {
     @Transactional
     public void deleteReservation(Long reservationId, User user) {
         if (!user.getRole().name().equals("ADMIN")) {
-            throw new RuntimeException("Brak uprawnień - tylko administrator może usuwać rezerwacje");
+            throw new ForbiddenException("Brak uprawnień - tylko administrator może usuwać rezerwacje");
         }
 
         Reservation reservation = findById(reservationId);

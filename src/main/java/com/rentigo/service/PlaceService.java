@@ -4,7 +4,10 @@ import com.rentigo.dto.*;
 import com.rentigo.dto.request.CreatePlaceRequest;
 import com.rentigo.dto.request.PlaceImageRequest;
 import com.rentigo.entity.*;
+import com.rentigo.exception.ForbiddenException;
+import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.*;
+import com.rentigo.util.PermissionChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -75,7 +78,7 @@ public class PlaceService {
         boolean isFavorite = currentUser != null &&
             favoriteRepository.existsByUserAndPlace(currentUser, place);
 
-        int reservationCount = reservationRepository.findByPlace(place).size();
+        int reservationCount = (int) reservationRepository.countByPlace(place);
 
         return PlaceListDto.builder()
             .id(place.getId())
@@ -107,16 +110,11 @@ public class PlaceService {
 
     public Place findById(Long id) {
         return placeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Miejsce nie znalezione"));
+            .orElseThrow(() -> new ResourceNotFoundException("Miejsce nie znalezione"));
     }
 
     public void checkOwnership(Place place, User user) {
-        boolean isOwner = place.getOwner().getId().equals(user.getId());
-        boolean isAdmin = user.getRole().name().equals("ADMIN");
-
-        if (!isOwner && !isAdmin) {
-            throw new RuntimeException("Brak uprawnień");
-        }
+        PermissionChecker.checkPlaceOwnership(user, place);
     }
 
     public Page<PlaceListDto> getActivePlaces(Pageable pageable, User currentUser) {

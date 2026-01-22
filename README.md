@@ -168,8 +168,8 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 │      users        │       │      places       │       │      cities       │
 ├───────────────────┤       ├───────────────────┤       ├───────────────────┤
 │ PK id             │       │ PK id             │       │ PK id             │
-│    email (unique) │       │ FK owner_id ──────┼───────│    name           │
-│    password       │       │ FK city_id ───────┼───────│    country        │
+│    email (unique) │       │ FK owner_id       │   ┌───│    name           │
+│    password       │       │ FK city_id ───────┼───┘   │    country        │
 │    first_name     │       │    name           │       │    created_at     │
 │    last_name      │       │    description    │       └───────────────────┘
 │    phone          │       │    address        │
@@ -236,11 +236,21 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
          │                  └───────────────────┘
          │
          │                  ┌───────────────────┐
-         └──────────────────┤    favorites      │
+         ├──────────────────┤    favorites      │
+         │                  ├───────────────────┤
+         │                  │ PK id             │
+         │                  │ FK user_id        │
+         │                  │ FK place_id       │
+         │                  │    created_at     │
+         │                  └───────────────────┘
+         │
+         │                  ┌───────────────────┐
+         └──────────────────┤     messages      │
                             ├───────────────────┤
                             │ PK id             │
-                            │ FK user_id        │
-                            │ FK place_id       │
+                            │ FK reservation_id │
+                            │ FK sender_id      │
+                            │    content        │
                             │    created_at     │
                             └───────────────────┘
 
@@ -258,7 +268,7 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 └───────────────────┘
 ```
 
-### Tabele w bazie danych (9 tabel + 1 junction)
+### Tabele w bazie danych (10 tabel + 1 junction)
 
 | Tabela | Opis | Liczba rekordów (seed) |
 |--------|------|------------------------|
@@ -267,10 +277,11 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 | amenities | Udogodnienia dostępne dla miejsc | 12 |
 | places | Miejsca noclegowe | 12 |
 | place_amenities | Relacja many-to-many places-amenities | ~50 |
-| place_images | Zdjęcia miejsc | ~24 |
+| place_images | Zdjęcia miejsc | 12 |
 | reservations | Rezerwacje | 8 |
 | reviews | Recenzje miejsc | 11 |
 | favorites | Ulubione miejsca użytkowników | 8 |
+| messages | Wiadomości w ramach rezerwacji | 0 |
 | contact_messages | Wiadomości z formularza kontaktowego | 0 |
 
 **Łącznie: 30+ rekordów testowych**
@@ -410,10 +421,12 @@ Backend API: http://localhost:8080
 |--------|----------|------|------|
 | GET | `/api/places` | Lista wszystkich miejsc | ❌ |
 | GET | `/api/places/{id}` | Szczegóły miejsca | ❌ |
-| GET | `/api/places/search` | Wyszukiwanie po nazwie | ❌ |
+| GET | `/api/places/search?q={query}` | Wyszukiwanie miejsc | ❌ |
 | GET | `/api/places/city/{cityId}` | Miejsca w mieście | ❌ |
 | POST | `/api/places` | Utwórz nowe miejsce | ✅ HOST |
 | PUT | `/api/places/{id}` | Aktualizuj miejsce | ✅ HOST |
+| PATCH | `/api/places/{id}/status` | Zmień status miejsca | ✅ HOST |
+| DELETE | `/api/places/{id}` | Usuń miejsce | ✅ HOST |
 | PATCH | `/api/places/{id}/status` | Zmień status miejsca | ✅ HOST |
 | DELETE | `/api/places/{id}` | Usuń miejsce | ✅ HOST |
 
@@ -426,9 +439,11 @@ Backend API: http://localhost:8080
 | GET | `/api/reservations/upcoming` | Nadchodzące rezerwacje | ✅ |
 | GET | `/api/reservations/past` | Przeszłe rezerwacje | ✅ |
 | GET | `/api/reservations/cancelled` | Anulowane rezerwacje | ✅ |
+| GET | `/api/reservations/host` | Rezerwacje moich miejsc (gospodarz) | ✅ HOST |
 | POST | `/api/reservations` | Utwórz rezerwację | ✅ |
 | POST | `/api/reservations/{id}/cancel` | Anuluj rezerwację | ✅ |
 | POST | `/api/reservations/{id}/confirm` | Potwierdź rezerwację | ✅ HOST |
+| DELETE | `/api/reservations/{id}` | Usuń rezerwację | ✅ ADMIN |
 
 ### Endpointy recenzji
 

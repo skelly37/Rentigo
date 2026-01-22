@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import api from '../services/api'
+import { getPlaceType } from '../utils/helpers'
 
 export default function FavoritesPage() {
   const [favorites, setFavorites] = useState([])
@@ -39,17 +40,6 @@ export default function FavoritesPage() {
 
   const handlePlaceClick = (placeId) => {
     navigate(`/place/${placeId}`)
-  }
-
-  const getPlaceType = (type) => {
-    const types = {
-      APARTMENT: 'Apartament',
-      HOUSE: 'Dom',
-      ROOM: 'Pokój',
-      VILLA: 'Willa',
-      STUDIO: 'Studio'
-    }
-    return types[type] || type
   }
 
   return (

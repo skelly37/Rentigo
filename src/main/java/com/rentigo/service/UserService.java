@@ -5,7 +5,12 @@ import com.rentigo.dto.request.RegisterRequest;
 import com.rentigo.dto.request.UpdateUserRequest;
 import com.rentigo.entity.Role;
 import com.rentigo.entity.User;
+import com.rentigo.exception.BadRequestException;
+import com.rentigo.exception.ConflictException;
+import com.rentigo.exception.ForbiddenException;
+import com.rentigo.exception.ResourceNotFoundException;
 import com.rentigo.repository.UserRepository;
+import com.rentigo.util.PermissionChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +38,7 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
+            .orElseThrow(() -> new ResourceNotFoundException("Użytkownik nie znaleziony"));
     }
 
     public User findByEmail(String email) {
@@ -48,7 +53,7 @@ public class UserService {
     @Transactional
     public User createUser(RegisterRequest request) {
         if (existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email jest już zajęty");
+            throw new ConflictException("Email jest już zajęty");
         }
 
         User user = User.builder()
@@ -74,7 +79,7 @@ public class UserService {
         }
         if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
             if (existsByEmail(request.getEmail())) {
-                throw new RuntimeException("Email jest już zajęty");
+                throw new ConflictException("Email jest już zajęty");
             }
             user.setEmail(request.getEmail());
         }
@@ -86,7 +91,7 @@ public class UserService {
         }
         if (request.getNewPassword() != null && request.getCurrentPassword() != null) {
             if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-                throw new RuntimeException("Nieprawidłowe obecne hasło");
+                throw new BadRequestException("Nieprawidłowe obecne hasło");
             }
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         }
@@ -113,11 +118,11 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId, User currentUser) {
         if (!currentUser.getRole().name().equals("ADMIN")) {
-            throw new RuntimeException("Brak uprawnień - tylko administrator może usuwać użytkowników");
+            throw new ForbiddenException("Brak uprawnień - tylko administrator może usuwać użytkowników");
         }
 
         if (currentUser.getId().equals(userId)) {
-            throw new RuntimeException("Nie możesz usunąć własnego konta");
+            throw new BadRequestException("Nie możesz usunąć własnego konta");
         }
 
         User user = findById(userId);

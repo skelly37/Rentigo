@@ -101,7 +101,7 @@ class ApiService {
   }
 
   async searchPlaces(query) {
-    return this.request(`/places/search?query=${encodeURIComponent(query)}`)
+    return this.request(`/places/search?q=${encodeURIComponent(query)}`)
   }
 
   async getPlacesByCity(cityId, guests, checkIn, checkOut) {

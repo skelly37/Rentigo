@@ -7,6 +7,7 @@ import com.rentigo.entity.Reservation;
 import com.rentigo.security.CurrentUser;
 import com.rentigo.security.UserPrincipal;
 import com.rentigo.service.ReservationService;
+import com.rentigo.util.PermissionChecker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -60,10 +61,7 @@ public class ReservationController {
             @PathVariable Long id,
             @CurrentUser UserPrincipal userPrincipal) {
         Reservation reservation = reservationService.findById(id);
-        if (!reservation.getUser().getId().equals(userPrincipal.getId()) &&
-            !reservation.getPlace().getOwner().getId().equals(userPrincipal.getId())) {
-            throw new RuntimeException("Brak uprawnień");
-        }
+        PermissionChecker.checkReservationAccess(userPrincipal.getUser(), reservation);
         return ResponseEntity.ok(reservationService.toDto(reservation));
     }
 

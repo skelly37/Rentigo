@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import api from '../services/api'
+import { getPlaceType } from '../utils/helpers'
 
 export default function MyPlacesPage() {
   const [places, setPlaces] = useState([])
@@ -99,17 +100,6 @@ export default function MyPlacesPage() {
       COMPLETED: { text: 'Zakończona', color: '#6c757d' }
     }
     return statuses[status] || { text: status, color: '#666' }
-  }
-
-  const getPlaceType = (type) => {
-    const types = {
-      APARTMENT: 'Apartament',
-      HOUSE: 'Dom',
-      ROOM: 'Pokój',
-      VILLA: 'Willa',
-      STUDIO: 'Studio'
-    }
-    return types[type] || type
   }
 
   return (

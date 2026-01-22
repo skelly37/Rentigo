@@ -7,6 +7,9 @@ import com.rentigo.entity.Place;
 import com.rentigo.entity.Review;
 import com.rentigo.entity.ReservationStatus;
 import com.rentigo.entity.User;
+import com.rentigo.exception.BadRequestException;
+import com.rentigo.exception.ConflictException;
+import com.rentigo.exception.ForbiddenException;
 import com.rentigo.repository.PlaceRepository;
 import com.rentigo.repository.ReservationRepository;
 import com.rentigo.repository.ReviewRepository;
@@ -77,11 +80,11 @@ public class ReviewService {
         );
 
         if (!hasFinishedReservation) {
-            throw new RuntimeException("Możesz dodać opinię tylko po zakończonej lub anulowanej rezerwacji");
+            throw new BadRequestException("Możesz dodać opinię tylko po zakończonej lub anulowanej rezerwacji");
         }
 
         if (reviewRepository.existsByPlaceAndUser(place, user)) {
-            throw new RuntimeException("Już dodałeś opinię dla tego miejsca");
+            throw new ConflictException("Już dodałeś opinię dla tego miejsca");
         }
 
         Review review = Review.builder()
@@ -111,7 +114,7 @@ public class ReviewService {
         boolean isAdmin = user.getRole().name().equals("ADMIN");
 
         if (!isOwner && !isAdmin) {
-            throw new RuntimeException("Brak uprawnień");
+            throw new ForbiddenException("Brak uprawnień");
         }
 
         Place place = review.getPlace();

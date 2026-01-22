@@ -1,5 +1,7 @@
 package com.rentigo.service;
 
+import com.rentigo.exception.ForbiddenException;
+
 import com.rentigo.dto.MessageDto;
 import com.rentigo.dto.request.CreateMessageRequest;
 import com.rentigo.entity.Message;
@@ -27,7 +29,7 @@ public class MessageService {
 
         if (!reservation.getUser().getId().equals(user.getId()) &&
             !reservation.getPlace().getOwner().getId().equals(user.getId())) {
-            throw new RuntimeException("Brak uprawnień do wiadomości tej rezerwacji");
+            throw new ForbiddenException("Brak uprawnień do wiadomości tej rezerwacji");
         }
 
         List<Message> messages = messageRepository.findByReservation_IdOrderByCreatedAtAsc(reservationId);
@@ -43,7 +45,7 @@ public class MessageService {
 
         if (!reservation.getUser().getId().equals(sender.getId()) &&
             !reservation.getPlace().getOwner().getId().equals(sender.getId())) {
-            throw new RuntimeException("Brak uprawnień do wysyłania wiadomości w tej rezerwacji");
+            throw new ForbiddenException("Brak uprawnień do wysyłania wiadomości w tej rezerwacji");
         }
 
         Message message = Message.builder()

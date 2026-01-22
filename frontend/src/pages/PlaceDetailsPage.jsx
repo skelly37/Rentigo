@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
+import { getTodayDate, getTomorrowDate, getPlaceType } from '../utils/helpers'
 
 export default function PlaceDetailsPage() {
   const { id } = useParams()
@@ -14,17 +15,6 @@ export default function PlaceDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [isFavorite, setIsFavorite] = useState(false)
-
-  const getTodayDate = () => {
-    const today = new Date()
-    return today.toISOString().split('T')[0]
-  }
-
-  const getTomorrowDate = () => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return tomorrow.toISOString().split('T')[0]
-  }
 
   const [bookingForm, setBookingForm] = useState({
     checkIn: getTodayDate(),
@@ -100,17 +90,6 @@ export default function PlaceDetailsPage() {
     } finally {
       setBookingLoading(false)
     }
-  }
-
-  const getPlaceType = (type) => {
-    const types = {
-      APARTMENT: 'Apartament',
-      HOUSE: 'Dom',
-      ROOM: 'Pokój',
-      VILLA: 'Willa',
-      STUDIO: 'Studio'
-    }
-    return types[type] || type
   }
 
   if (loading) {

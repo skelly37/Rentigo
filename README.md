@@ -10,33 +10,32 @@ Rentigo to nowoczesna platforma internetowa umożliwiająca użytkownikom wyszuk
 - [Role użytkowników](#role-użytkowników)
 - [Instrukcja uruchomienia](#instrukcja-uruchomienia)
 - [Dokumentacja API](#dokumentacja-api)
-- [Struktura projektu](#struktura-projektu)
 
 ## Wybór technologii
 
 ### Backend
 
-| Technologia | Wersja | Uzasadnienie |
-|-------------|--------|--------------|
-| **Java** | 11 | Stabilność, wydajność, bogaty ekosystem bibliotek i szeroka społeczność |
-| **Spring Boot** | 2.7.18 | Szybkie tworzenie aplikacji, autowiring, bogata integracja z bazami danych i systemami kolejkowymi |
-| **Spring Security** | 5.7.x | Kompleksowe rozwiązanie do uwierzytelniania i autoryzacji |
-| **Spring Data JPA** | 2.7.x | Uproszczony dostęp do bazy danych, automatyczne generowanie zapytań |
-| **PostgreSQL** | 15+ | Stabilna relacyjna baza danych, wsparcie dla JSON, zaawansowane indeksowanie |
-| **JWT (jjwt)** | 0.11.5 | Bezstanowe uwierzytelnianie, skalowalność, bezpieczeństwo |
-| **RabbitMQ** | 3.x | Asynchroniczne przetwarzanie powiadomień, niezawodność, wsparcie dla wzorców pub/sub |
-| **Lombok** | 1.18.x | Redukcja boilerplate code, czytelniejszy kod |
-| **SpringDoc OpenAPI** | 1.7.0 | Automatyczna generacja dokumentacji API, Swagger UI |
+| Technologia           | Wersja | Uzasadnienie                                                                                       |
+|-----------------------|--------|----------------------------------------------------------------------------------------------------|
+| **Java**              | 11     | Stabilność, wydajność, bogaty ekosystem bibliotek i szeroka społeczność                            |
+| **Spring Boot**       | 2.7.18 | Szybkie tworzenie aplikacji, autowiring, bogata integracja z bazami danych i systemami kolejkowymi |
+| **Spring Security**   | 5.7.x  | Kompleksowe rozwiązanie do uwierzytelniania i autoryzacji                                          |
+| **Spring Data JPA**   | 2.7.x  | Uproszczony dostęp do bazy danych, automatyczne generowanie zapytań                                |
+| **PostgreSQL**        | 15+    | Stabilna relacyjna baza danych, wsparcie dla JSON, zaawansowane indeksowanie                       |
+| **JWT (jjwt)**        | 0.11.5 | Bezstanowe uwierzytelnianie, skalowalność, bezpieczeństwo                                          |
+| **RabbitMQ**          | 3.x    | Asynchroniczne przetwarzanie powiadomień, niezawodność, wsparcie dla wzorców pub/sub               |
+| **Lombok**            | 1.18.x | Redukcja boilerplate code, czytelniejszy kod                                                       |
+| **SpringDoc OpenAPI** | 1.7.0  | Automatyczna generacja dokumentacji API, Swagger UI                                                |
 
 ### Frontend
 
-| Technologia | Wersja | Uzasadnienie |
-|-------------|--------|--------------|
-| **React** | 18.2.0 | Nowoczesna biblioteka UI, komponentowy model, wydajne renderowanie, bogaty ekosystem |
-| **React Router** | 6.20.0 | Routing po stronie klienta, SPA navigation, protected routes |
-| **Vite** | 5.0.8 | Szybki build tool, HMR (Hot Module Replacement), optymalizacja produkcyjna |
-| **Fetch API** | Native | Natywna obsługa HTTP, Promise-based, czysty kod |
-| **CSS3** | - | Responsywny design z media queries, Flexbox/Grid, mobile-first approach |
+| Technologia      | Wersja  | Uzasadnienie                                                                         |
+|------------------|---------|--------------------------------------------------------------------------------------|
+| **React**        | 18.2.0  | Nowoczesna biblioteka UI, komponentowy model, wydajne renderowanie, bogaty ekosystem |
+| **React Router** | 6.20.0  | Routing po stronie klienta, SPA navigation, protected routes                         |
+| **Vite**         | 5.0.8   | Szybki build tool, HMR (Hot Module Replacement), optymalizacja produkcyjna           |
+| **Fetch API**    | Native  | Natywna obsługa HTTP, Promise-based, czysty kod                                      |
+| **CSS3**         | -       | Responsywny design z media queries, Flexbox/Grid, mobile-first approach              |
 
 ### Dodatkowe narzędzia
 
@@ -50,54 +49,54 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    PRESENTATION LAYER                        │
+│                    PRESENTATION LAYER                       │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │              HTML / CSS / JavaScript                 │    │
+│  │              HTML / CSS / JavaScript                │    │
 │  │         (login, search, hotel, profile, etc.)       │    │
 │  └─────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     CONTROLLER LAYER                         │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│                     CONTROLLER LAYER                        │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐       │
 │  │   Auth   │ │  Place   │ │Reservation│ │  Review  │       │
 │  │Controller│ │Controller│ │Controller │ │Controller│       │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
-│  │   User   │ │ Favorite │ │   City   │ │ Amenity  │       │
-│  │Controller│ │Controller│ │Controller│ │Controller│       │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│  └──────────┘ └──────────┘ └───────────┘ └──────────┘       │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐       │
+│  │   User   │ │ Favorite │ │   City    │ │ Amenity  │       │
+│  │Controller│ │Controller│ │Controller │ │Controller│       │
+│  └──────────┘ └──────────┘ └───────────┘ └──────────┘       │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      SERVICE LAYER                           │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│                      SERVICE LAYER                          │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐       │
 │  │   User   │ │  Place   │ │Reservation│ │  Review  │       │
 │  │ Service  │ │ Service  │ │  Service  │ │ Service  │       │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
-│  ┌──────────────────┐  ┌──────────────────────────┐        │
-│  │ FavoriteService  │  │   NotificationService    │        │
-│  └──────────────────┘  └──────────────────────────┘        │
+│  └──────────┘ └──────────┘ └───────────┘ └──────────┘       │
+│  ┌──────────────────┐  ┌──────────────────────────┐         │
+│  │ FavoriteService  │  │   NotificationService    │         │
+│  └──────────────────┘  └──────────────────────────┘         │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    REPOSITORY LAYER                          │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│                    REPOSITORY LAYER                         │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐       │
 │  │   User   │ │  Place   │ │Reservation│ │  Review  │       │
 │  │Repository│ │Repository│ │Repository │ │Repository│       │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│  └──────────┘ └──────────┘ └───────────┘ └──────────┘       │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      DATA LAYER                              │
-│  ┌─────────────────────┐  ┌─────────────────────┐          │
-│  │     PostgreSQL      │  │      RabbitMQ       │          │
-│  │   (Persistence)     │  │  (Message Queue)    │          │
-│  └─────────────────────┘  └─────────────────────┘          │
+│                      DATA LAYER                             │
+│  ┌─────────────────────┐  ┌─────────────────────┐           │
+│  │     PostgreSQL      │  │      RabbitMQ       │           │
+│  │   (Persistence)     │  │  (Message Queue)    │           │
+│  └─────────────────────┘  └─────────────────────┘           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -123,34 +122,34 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│                    React Application                    │
+│                    React Application                   │
 ├────────────────────────────────────────────────────────┤
 │  ┌──────────────────────────────────────────────────┐  │
-│  │              React Router (SPA)                   │  │
+│  │              React Router (SPA)                  │  │
 │  │  - Route Guards (PrivateRoute)                   │  │
 │  │  - Dynamic routing (/place/:id)                  │  │
 │  └──────────────────────────────────────────────────┘  │
-│                          │                              │
-│  ┌──────────────────────┴──────────────────────────┐  │
+│                          │                             │
+│  ┌──────────────────────┴───────────────────────────┐  │
 │  │           Context API (AuthContext)              │  │
 │  │  - User state management                         │  │
 │  │  - Token management                              │  │
 │  │  - Login/Logout functions                        │  │
 │  └──────────────────────────────────────────────────┘  │
-│                          │                              │
-│  ┌──────────────┬────────┴────────┬──────────────┐    │
-│  │   Pages      │   Components    │   Services   │    │
-│  │  - HomePage  │   - Navbar      │   - api.js   │    │
-│  │  - SearchPage│   - Footer      │   - Fetch    │    │
-│  │  - Profile   │   - Layout      │              │    │
-│  │  - ...       │   - Cards       │              │    │
-│  └──────────────┴─────────────────┴──────────────┘    │
+│                          │                             │
+│  ┌──────────────┬────────┴────────┬──────────────┐     │
+│  │   Pages      │   Components    │   Services   │     │
+│  │  - HomePage  │   - Navbar      │   - api.js   │     │
+│  │  - SearchPage│   - Footer      │   - Fetch    │     │
+│  │  - Profile   │   - Layout      │              │     │
+│  │  - ...       │   - Cards       │              │     │
+│  └──────────────┴─────────────────┴──────────────┘     │
 └────────────────────────────────────────────────────────┘
                           │
                           ▼
               ┌───────────────────────┐
-              │   REST API (Backend)   │
-              │   Spring Boot :8080    │
+              │   REST API (Backend)  │
+              │   Spring Boot :8080   │
               └───────────────────────┘
 ```
 
@@ -270,19 +269,19 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 
 ### Tabele w bazie danych (10 tabel + 1 junction)
 
-| Tabela | Opis | Liczba rekordów (seed) |
-|--------|------|------------------------|
-| users | Użytkownicy systemu | 7 |
-| cities | Miasta dostępne w systemie | 6 |
-| amenities | Udogodnienia dostępne dla miejsc | 12 |
-| places | Miejsca noclegowe | 12 |
-| place_amenities | Relacja many-to-many places-amenities | ~50 |
-| place_images | Zdjęcia miejsc | 12 |
-| reservations | Rezerwacje | 8 |
-| reviews | Recenzje miejsc | 11 |
-| favorites | Ulubione miejsca użytkowników | 8 |
-| messages | Wiadomości w ramach rezerwacji | 0 |
-| contact_messages | Wiadomości z formularza kontaktowego | 0 |
+| Tabela           | Opis                                  | Liczba rekordów (seed)  |
+|------------------|---------------------------------------|-------------------------|
+| users            | Użytkownicy systemu                   | 7                       |
+| cities           | Miasta dostępne w systemie            | 6                       |
+| amenities        | Udogodnienia dostępne dla miejsc      | 12                      |
+| places           | Miejsca noclegowe                     | 12                      |
+| place_amenities  | Relacja many-to-many places-amenities | ~50                     |
+| place_images     | Zdjęcia miejsc                        | 12                      |
+| reservations     | Rezerwacje                            | 8                       |
+| reviews          | Recenzje miejsc                       | 11                      |
+| favorites        | Ulubione miejsca użytkowników         | 8                       |
+| messages         | Wiadomości w ramach rezerwacji        | 0                       |
+| contact_messages | Wiadomości z formularza kontaktowego  | 0                       |
 
 **Łącznie: 30+ rekordów testowych**
 
@@ -290,38 +289,38 @@ Aplikacja wykorzystuje **warstwową architekturę** (Layered Architecture):
 
 ### Zaimplementowane
 
-| Funkcjonalność | Status | Opis |
-|----------------|--------|------|
-| Rejestracja użytkownika | ✅ | Tworzenie nowego konta z walidacją |
-| Logowanie | ✅ | Uwierzytelnianie JWT |
-| Wyszukiwanie miejsc | ✅ | Po mieście, liczbie gości |
-| Przeglądanie ofert | ✅ | Lista wszystkich miejsc |
-| Szczegóły miejsca | ✅ | Pełne informacje, zdjęcia, recenzje |
-| Rezerwacja | ✅ | Tworzenie rezerwacji z walidacją dat i dynamiczną ceną |
-| Moje rezerwacje | ✅ | Lista rezerwacji użytkownika (nadchodzące, przeszłe, anulowane) |
-| Anulowanie rezerwacji | ✅ | Możliwość anulowania przez gościa |
-| Potwierdzanie rezerwacji | ✅ | Zatwierdzanie rezerwacji przez gospodarza |
-| Komunikacja host-gość | ✅ | Czat między gościem a gospodarzem w ramach rezerwacji |
-| Recenzje | ✅ | Dodawanie ocen miejsc po zakończonym pobycie |
-| Ulubione | ✅ | Dodawanie/usuwanie z ulubionych |
-| Panel gospodarza | ✅ | Zarządzanie własnymi miejscami i statystyki |
-| Dodawanie miejsca | ✅ | Tworzenie nowego ogłoszenia |
-| Edycja miejsca | ✅ | Aktualizacja istniejącego ogłoszenia |
-| Usuwanie miejsca | ✅ | Możliwość usunięcia miejsca przez gospodarza |
-| Zarządzanie zdjęciami | ✅ | Dodawanie, usuwanie i ustawianie głównego zdjęcia |
-| Profil użytkownika | ✅ | Edycja danych osobowych (imię, nazwisko, email, hasło, avatar) |
-| Upgrade do HOST | ✅ | Zmiana roli na gospodarza |
-| Formularz kontaktowy | ✅ | Wysyłanie wiadomości |
-| Powiadomienia async | ✅ | RabbitMQ dla powiadomień |
-| Dokumentacja API | ✅ | Swagger UI |
+| Funkcjonalność           | Status  | Opis                                                            |
+|--------------------------|---------|-----------------------------------------------------------------|
+| Rejestracja użytkownika  | ✅       | Tworzenie nowego konta z walidacją                              |
+| Logowanie                | ✅       | Uwierzytelnianie JWT                                            |
+| Wyszukiwanie miejsc      | ✅       | Po mieście, liczbie gości                                       |
+| Przeglądanie ofert       | ✅       | Lista wszystkich miejsc                                         |
+| Szczegóły miejsca        | ✅       | Pełne informacje, zdjęcia, recenzje                             |
+| Rezerwacja               | ✅       | Tworzenie rezerwacji z walidacją dat i dynamiczną ceną          |
+| Moje rezerwacje          | ✅       | Lista rezerwacji użytkownika (nadchodzące, przeszłe, anulowane) |
+| Anulowanie rezerwacji    | ✅       | Możliwość anulowania przez gościa                               |
+| Potwierdzanie rezerwacji | ✅       | Zatwierdzanie rezerwacji przez gospodarza                       |
+| Komunikacja host-gość    | ✅       | Czat między gościem a gospodarzem w ramach rezerwacji           |
+| Recenzje                 | ✅       | Dodawanie ocen miejsc po zakończonym pobycie                    |
+| Ulubione                 | ✅       | Dodawanie/usuwanie z ulubionych                                 |
+| Panel gospodarza         | ✅       | Zarządzanie własnymi miejscami i statystyki                     |
+| Dodawanie miejsca        | ✅       | Tworzenie nowego ogłoszenia                                     |
+| Edycja miejsca           | ✅       | Aktualizacja istniejącego ogłoszenia                            |
+| Usuwanie miejsca         | ✅       | Możliwość usunięcia miejsca przez gospodarza                    |
+| Zarządzanie zdjęciami    | ✅       | Dodawanie, usuwanie i ustawianie głównego zdjęcia               |
+| Profil użytkownika       | ✅       | Edycja danych osobowych (imię, nazwisko, email, hasło, avatar)  |
+| Upgrade do HOST          | ✅       | Zmiana roli na gospodarza                                       |
+| Formularz kontaktowy     | ✅       | Wysyłanie wiadomości                                            |
+| Powiadomienia async      | ✅       | RabbitMQ dla powiadomień                                        |
+| Dokumentacja API         | ✅       | Swagger UI                                                      |
 
 ## Role użytkowników
 
-| Rola | Uprawnienia |
-|------|-------------|
-| **USER** | Przeglądanie miejsc, rezerwacje, recenzje, ulubione |
-| **HOST** | Wszystko co USER + dodawanie/edycja miejsc, zarządzanie rezerwacjami |
-| **ADMIN** | Pełny dostęp do systemu |
+| Rola      | Uprawnienia                                                          |
+|-----------|----------------------------------------------------------------------|
+| **USER**  | Przeglądanie miejsc, rezerwacje, recenzje, ulubione                  |
+| **HOST**  | Wszystko co USER + dodawanie/edycja miejsc, zarządzanie rezerwacjami |
+| **ADMIN** | Pełny dostęp do systemu                                              |
 
 ## Instrukcja uruchomienia
 
@@ -387,109 +386,109 @@ Backend API: http://localhost:8080
 
 ### Domyślne konta testowe
 
-| Email | Hasło | Rola |
-|-------|-------|------|
-| admin@rentigo.pl | admin123 | ADMIN |
-| jan.kowalski@example.com | password123 | HOST |
-| anna.nowak@example.com | password123 | HOST |
-| katarzyna.dabrowska@example.com | password123 | HOST |
-| piotr.wisniewski@example.com | password123 | USER |
-| maria.zielinska@example.com | password123 | USER |
-| tomasz.lewandowski@example.com | password123 | USER |
+| Email                           | Hasło       | Rola   |
+|---------------------------------|-------------|--------|
+| admin@rentigo.pl                | admin123    | ADMIN  |
+| jan.kowalski@example.com        | password123 | HOST   |
+| anna.nowak@example.com          | password123 | HOST   |
+| katarzyna.dabrowska@example.com | password123 | HOST   |
+| piotr.wisniewski@example.com    | password123 | USER   |
+| maria.zielinska@example.com     | password123 | USER   |
+| tomasz.lewandowski@example.com  | password123 | USER   |
 
 ## Dokumentacja API
 
 ### Endpointy autoryzacji
 
-| Metoda | Endpoint | Opis |
-|--------|----------|------|
-| POST | `/api/auth/register` | Rejestracja nowego użytkownika |
-| POST | `/api/auth/login` | Logowanie, zwraca JWT token |
+| Metoda  | Endpoint             | Opis                           |
+|---------|----------------------|--------------------------------|
+| POST    | `/api/auth/register` | Rejestracja nowego użytkownika |
+| POST    | `/api/auth/login`    | Logowanie, zwraca JWT token    |
 
 ### Endpointy użytkowników
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/users/me` | Pobierz dane zalogowanego użytkownika | ✅ |
-| PUT | `/api/users/me` | Aktualizuj dane użytkownika | ✅ |
-| POST | `/api/users/me/upgrade-to-host` | Upgrade do roli HOST | ✅ |
-| DELETE | `/api/users/{id}` | Usuń użytkownika | ✅ ADMIN |
+| Metoda  | Endpoint                        | Opis                                  | Auth    |
+|---------|---------------------------------|---------------------------------------|---------|
+| GET     | `/api/users/me`                 | Pobierz dane zalogowanego użytkownika | ✅       |
+| PUT     | `/api/users/me`                 | Aktualizuj dane użytkownika           | ✅       |
+| POST    | `/api/users/me/upgrade-to-host` | Upgrade do roli HOST                  | ✅       |
+| DELETE  | `/api/users/{id}`               | Usuń użytkownika                      | ✅ ADMIN |
 
 ### Endpointy miejsc
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/places` | Lista wszystkich miejsc | ❌ |
-| GET | `/api/places/{id}` | Szczegóły miejsca | ❌ |
-| GET | `/api/places/search?q={query}` | Wyszukiwanie miejsc | ❌ |
-| GET | `/api/places/city/{cityId}` | Miejsca w mieście | ❌ |
-| POST | `/api/places` | Utwórz nowe miejsce | ✅ HOST |
-| PUT | `/api/places/{id}` | Aktualizuj miejsce | ✅ HOST |
-| PATCH | `/api/places/{id}/status` | Zmień status miejsca | ✅ HOST |
-| DELETE | `/api/places/{id}` | Usuń miejsce | ✅ HOST |
+| Metoda  | Endpoint                       | Opis                    | Auth   |
+|---------|--------------------------------|-------------------------|--------|
+| GET     | `/api/places`                  | Lista wszystkich miejsc | ❌      |
+| GET     | `/api/places/{id}`             | Szczegóły miejsca       | ❌      |
+| GET     | `/api/places/search?q={query}` | Wyszukiwanie miejsc     | ❌      |
+| GET     | `/api/places/city/{cityId}`    | Miejsca w mieście       | ❌      |
+| POST    | `/api/places`                  | Utwórz nowe miejsce     | ✅ HOST |
+| PUT     | `/api/places/{id}`             | Aktualizuj miejsce      | ✅ HOST |
+| PATCH   | `/api/places/{id}/status`      | Zmień status miejsca    | ✅ HOST |
+| DELETE  | `/api/places/{id}`             | Usuń miejsce            | ✅ HOST |
 
 ### Endpointy rezerwacji
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/reservations` | Moje rezerwacje | ✅ |
-| GET | `/api/reservations/{id}` | Szczegóły rezerwacji | ✅ |
-| GET | `/api/reservations/upcoming` | Nadchodzące rezerwacje | ✅ |
-| GET | `/api/reservations/past` | Przeszłe rezerwacje | ✅ |
-| GET | `/api/reservations/cancelled` | Anulowane rezerwacje | ✅ |
-| GET | `/api/reservations/host` | Rezerwacje moich miejsc (gospodarz) | ✅ HOST |
-| POST | `/api/reservations` | Utwórz rezerwację | ✅ |
-| POST | `/api/reservations/{id}/cancel` | Anuluj rezerwację | ✅ |
-| POST | `/api/reservations/{id}/confirm` | Potwierdź rezerwację | ✅ HOST |
-| DELETE | `/api/reservations/{id}` | Usuń rezerwację | ✅ ADMIN |
+| Metoda  | Endpoint                         | Opis                                | Auth    |
+|---------|----------------------------------|-------------------------------------|---------|
+| GET     | `/api/reservations`              | Moje rezerwacje                     | ✅       |
+| GET     | `/api/reservations/{id}`         | Szczegóły rezerwacji                | ✅       |
+| GET     | `/api/reservations/upcoming`     | Nadchodzące rezerwacje              | ✅       |
+| GET     | `/api/reservations/past`         | Przeszłe rezerwacje                 | ✅       |
+| GET     | `/api/reservations/cancelled`    | Anulowane rezerwacje                | ✅       |
+| GET     | `/api/reservations/host`         | Rezerwacje moich miejsc (gospodarz) | ✅ HOST  |
+| POST    | `/api/reservations`              | Utwórz rezerwację                   | ✅       |
+| POST    | `/api/reservations/{id}/cancel`  | Anuluj rezerwację                   | ✅       |
+| POST    | `/api/reservations/{id}/confirm` | Potwierdź rezerwację                | ✅ HOST  |
+| DELETE  | `/api/reservations/{id}`         | Usuń rezerwację                     | ✅ ADMIN |
 
 ### Endpointy recenzji
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/reviews/place/{placeId}` | Recenzje miejsca | ❌ |
-| GET | `/api/reviews/place/{placeId}/summary` | Podsumowanie ocen | ❌ |
-| POST | `/api/reviews` | Dodaj recenzję | ✅ |
+| Metoda  | Endpoint                               | Opis              | Auth  |
+|---------|----------------------------------------|-------------------|-------|
+| GET     | `/api/reviews/place/{placeId}`         | Recenzje miejsca  | ❌     |
+| GET     | `/api/reviews/place/{placeId}/summary` | Podsumowanie ocen | ❌     |
+| POST    | `/api/reviews`                         | Dodaj recenzję    | ✅     |
 
 ### Endpointy ulubionych
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/favorites` | Moje ulubione | ✅ |
-| POST | `/api/favorites/{placeId}/toggle` | Toggle ulubione | ✅ |
+| Metoda  | Endpoint                          | Opis            | Auth  |
+|---------|-----------------------------------|-----------------|-------|
+| GET     | `/api/favorites`                  | Moje ulubione   | ✅     |
+| POST    | `/api/favorites/{placeId}/toggle` | Toggle ulubione | ✅     |
 
 ### Endpointy gospodarza
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/host/places` | Moje miejsca | ✅ HOST |
-| GET | `/api/host/places/{placeId}/reservations` | Rezerwacje dla miejsca | ✅ HOST |
-| GET | `/api/host/stats` | Statystyki gospodarza | ✅ HOST |
+| Metoda  | Endpoint                                  | Opis                   | Auth   |
+|---------|-------------------------------------------|------------------------|--------|
+| GET     | `/api/host/places`                        | Moje miejsca           | ✅ HOST |
+| GET     | `/api/host/places/{placeId}/reservations` | Rezerwacje dla miejsca | ✅ HOST |
+| GET     | `/api/host/stats`                         | Statystyki gospodarza  | ✅ HOST |
 
 ### Endpointy wiadomości (komunikacja host-gość)
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/messages/reservation/{reservationId}` | Pobierz wiadomości dla rezerwacji | ✅ |
-| POST | `/api/messages` | Wyślij wiadomość | ✅ |
+| Metoda  | Endpoint                                    | Opis                              | Auth  |
+|---------|---------------------------------------------|-----------------------------------|-------|
+| GET     | `/api/messages/reservation/{reservationId}` | Pobierz wiadomości dla rezerwacji | ✅     |
+| POST    | `/api/messages`                             | Wyślij wiadomość                  | ✅     |
 
 ### Endpointy zarządzania zdjęciami
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| POST | `/api/files/places/{placeId}/images` | Dodaj zdjęcie do miejsca | ✅ HOST |
-| DELETE | `/api/files/places/images/{imageId}` | Usuń zdjęcie | ✅ HOST |
-| PATCH | `/api/files/places/images/{imageId}/set-main` | Ustaw jako główne zdjęcie | ✅ HOST |
-| POST | `/api/files/avatar` | Dodaj/zmień avatar użytkownika | ✅ |
-| DELETE | `/api/files/avatar` | Usuń avatar użytkownika | ✅ |
+| Metoda  | Endpoint                                      | Opis                           | Auth   |
+|---------|-----------------------------------------------|--------------------------------|--------|
+| POST    | `/api/files/places/{placeId}/images`          | Dodaj zdjęcie do miejsca       | ✅ HOST |
+| DELETE  | `/api/files/places/images/{imageId}`          | Usuń zdjęcie                   | ✅ HOST |
+| PATCH   | `/api/files/places/images/{imageId}/set-main` | Ustaw jako główne zdjęcie      | ✅ HOST |
+| POST    | `/api/files/avatar`                           | Dodaj/zmień avatar użytkownika | ✅      |
+| DELETE  | `/api/files/avatar`                           | Usuń avatar użytkownika        | ✅      |
 
 ### Pozostałe endpointy
 
-| Metoda | Endpoint | Opis | Auth |
-|--------|----------|------|------|
-| GET | `/api/cities` | Lista miast | ❌ |
-| GET | `/api/amenities` | Lista udogodnień | ❌ |
-| POST | `/api/contact` | Wyślij wiadomość | ❌ |
+| Metoda  | Endpoint         | Opis             | Auth  |
+|---------|------------------|------------------|-------|
+| GET     | `/api/cities`    | Lista miast      | ❌     |
+| GET     | `/api/amenities` | Lista udogodnień | ❌     |
+| POST    | `/api/contact`   | Wyślij wiadomość | ❌     |
 
 ## Licencja
 
